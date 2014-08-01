@@ -39,4 +39,4 @@ You can now copy the **.war** file in the **webapps** folder of your Tomcat inst
 
 **Note:** The version 16.0.0 of the webapp does not work with Tomcat 8.
 
-**Note:** Before any change to the webapp, please stop and start the Tomcat instance again. The oXygen WebApp does not support hot reload.
+**Note:** After any change to the webapp, please stop and start the Tomcat instance again. The oXygen WebApp does not support hot reload.

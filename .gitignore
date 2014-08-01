@@ -4,3 +4,4 @@
 target
 ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/dbx-secrets.properties
 ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/gdrive-secrets.json
+*~
