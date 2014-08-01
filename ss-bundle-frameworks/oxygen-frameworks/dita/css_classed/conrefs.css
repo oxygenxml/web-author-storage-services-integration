@@ -1,0 +1,204 @@
+/* EXM-22130 If a table refers other table, its display is block */
+*[class~="topic/table"][conref],
+*[class~="topic/table"][conkeyref]{
+    display : block;
+}
+
+/* EXM-17012 Avoid layout messages in tables with conref */
+*[class~="topic/simpletable"][conref],
+*[class~="topic/simpletable"][conkeyref]{
+    display : block;
+}
+*[class~="topic/simpletable"][conref][conaction],
+*[class~="topic/simpletable"][conkeyref][conaction]{
+    display : table;
+}
+
+/*No margins and static content to elements with conref.
+The content will we present on the conreffed element.*/
+*[conref],
+*[conkeyref]{
+    background-color:inherit;
+    margin:0;
+    padding:0;
+    border:none;
+}
+/*EXM-20282 Remove static text, no margins*/
+*[conref]:before,
+*[conkeyref]:before{
+    content:"";
+    display:inline;
+    margin:0px;
+}
+/**[conref]:before,
+*[conref]:after,
+*[conkeyref]:before,
+*[conkeyref]:after {
+    display:none;
+}*/
+/* start conref/conkeyref handling */
+/* Hides the required content that is just needed for display on 
+ conkeyref and conref for topic, ol/li, ul/li, table */
+ /*topic*/
+*[class~="topic/topic"][conkeyref] > *[class~="topic/topic"],
+*[class~="topic/topic"][conref] > *[class~="topic/topic"],
+*[class~="topic/topic"][conkeyref][conaction] > *, 
+*[class~="topic/topic"][conref][conaction] > *,
+/*table*/
+*[class~="topic/table"][conkeyref] > *[class~="topic/table"],
+*[class~="topic/table"][conref] > *[class~="topic/table"],
+*[class~="topic/table"][conkeyref][conaction] > *, 
+*[class~="topic/table"][conref][conaction] > *,
+/*ol*/
+*[class~="topic/ol"][conkeyref] > *[class~="topic/ol"],
+*[class~="topic/ol"][conref] > *[class~="topic/ol"],
+*[class~="topic/ol"][conkeyref][conaction] > *, 
+*[class~="topic/ol"][conref][conaction] > *,
+/* ul */
+*[class~="topic/ul"][conkeyref] > *[class~="topic/ul"],
+*[class~="topic/ul"][conref] > *[class~="topic/ul"],
+*[class~="topic/ul"][conkeyref][conaction] > *, 
+*[class~="topic/ul"][conref][conaction] > *,
+/* Definition list of parml */
+*[class~="topic/dl"][conkeyref] > *[class~="topic/dl"],
+*[class~="topic/dl"][conref] > *[class~="topic/dl"],
+*[class~="topic/dl"][conkeyref][conaction] > *, 
+*[class~="topic/dl"][conref][conaction] > *
+{
+    display : inherit;
+}
+
+*[class~="topic/table"][conkeyref] > *,    
+*[class~="topic/table"][conref] > *,
+*[class~="topic/ol"][conkeyref] > *,    
+*[class~="topic/ol"][conref] > *,
+*[class~="topic/ul"][conkeyref] > *,    
+*[class~="topic/ul"][conref] > *, 
+*[class~="topic/topic"][conref] > *,
+*[class~="topic/topic"][conkeyref] > *,
+/* Definition list of parml */
+*[class~="topic/dl"][conref] > *,
+*[class~="topic/dl"][conkeyref] > * {
+    display : none;
+}
+/* --- end conref/conkeyref handling --- */
+
+/*EXM-16989 Some conref cases start*/
+/* Try to avoid re-declaring the counter when a content reference is used */
+
+*[class~="topic/ul"] > *[class~="topic/li"][conref],
+*[class~="topic/ul"] > *[class~="topic/li"][conkeyref] {
+    display: block;    
+}
+
+/*  OL  -  LI */
+*[class~="topic/ol"] > *[class~="topic/li"][conref] > *[class~="topic/li"]:first-child,
+*[class~="topic/ol"] > *[class~="topic/li"][conkeyref] > *[class~="topic/li"]:first-child {
+    counter-reset: none;
+}
+
+*[class~="topic/ol"] > *[class~="topic/li"][conref],
+*[class~="topic/ol"] > *[class~="topic/li"][conkeyref]{
+    counter-increment: none;
+}
+
+*[class~="topic/ol"] > *[class~="topic/li"][conref]:before,
+*[class~="topic/ol"] > *[class~="topic/li"][conkeyref]:before{
+   /*Avoid showing the counter*/
+    content: "";
+}
+
+*[class~="topic/ol"] > *[class~="topic/li"][conref] > *[class~="topic/li"],
+*[class~="topic/ol"] > *[class~="topic/li"][conkeyref] > *[class~="topic/li"]{
+    counter-increment: item-count;
+}
+
+/*EXM-28795 second level of ordered list*/
+*[class~="topic/ol"] *[class~="topic/ol"]  > *[class~="topic/li"][conref] > *[class~="topic/li"],
+*[class~="topic/ol"] *[class~="topic/ol"]  > *[class~="topic/li"][conkeyref] > *[class~="topic/li"]{
+    counter-increment: item2-count;
+}
+
+*[class~="topic/ol"] > *[class~="topic/li"][conref] > *[class~="topic/li"]:before,
+*[class~="topic/ol"] > *[class~="topic/li"][conkeyref] > *[class~="topic/li"]:before{
+    content: counters(item-count, ".", decimal) " ";
+    font-weight:bold;
+}
+/*EXM-28795 second level of ordered list*/
+*[class~="topic/ol"] *[class~="topic/ol"] > *[class~="topic/li"][conref] > *[class~="topic/li"]:before,
+*[class~="topic/ol"] *[class~="topic/ol"] > *[class~="topic/li"][conkeyref] > *[class~="topic/li"]:before{
+    content: counters(item2-count, ".", lower-alpha) " ";
+    font-weight:bold;
+}
+
+*[class~="topic/ol"] > *[class~="topic/li"][conref] > *[class~="topic/li"],
+*[class~="topic/ol"] > *[class~="topic/li"][conkeyref] > *[class~="topic/li"] {
+   /* Use list-item instead of block to avoid putting the 
+    sentinels markers of the "ol" and the first "li"
+    on the same line, in compact tag display.*/
+    display:list-item;
+    list-style:none;    
+}
+
+/*EXM-16989 Some conref cases end*/
+/*EXM-16989 Some conref cases start*/
+*[class~="task/steps"] > *[class~="task/step"][conref]:before,
+*[class~="task/steps"] > *[class~="task/step"][conkeyref]:before{
+    counter-increment:none;
+}
+
+*[class~="task/steps"] > *[class~="task/step"][conref] > *[class~="task/step"]:before,
+*[class~="task/steps"] > *[class~="task/step"][conkeyref] > *[class~="task/step"]:before{
+    content: "Step " counter(step-count);
+    counter-increment:step-count;
+    background-color:inherit;
+    font-weight:bold;
+}
+
+*[class~="task/steps"] > *[class~="task/step"][conref] > *[class~="task/step"],
+*[class~="task/steps"] > *[class~="task/step"][conkeyref] > *[class~="task/step"]{
+   display:list-item;
+   list-style:none;
+}
+
+/*EXM-16989 Some conref cases end*/
+/*EXM-16989 Some conref cases start*/
+*[class~="task/substeps"]>*[class~="task/substep"][conref]:before,
+*[class~="task/substeps"]>*[class~="task/substep"][conkeyref]:before{
+    counter-increment:none;
+}
+
+*[class~="task/substeps"] > *[class~="task/substep"][conref] > *[class~="task/substep"]:before,
+*[class~="task/substeps"] > *[class~="task/substep"][conkeyref] > *[class~="task/substep"]:before,
+*[class~="task/step"] *[class~="task/substeps"] > *[class~="task/substep"][conref] > *[class~="task/substep"]:before,
+*[class~="task/step"] *[class~="task/substeps"] > *[class~="task/substep"][conkeyref] > *[class~="task/substep"]:before{
+    content:counter(substep-count, lower-alpha) ". Sub-step " ;
+    counter-increment:substep-count;
+    background-color:inherit;
+    margin-left:20px;
+    font-weight:bold;
+}
+
+/*Make the steps and substeps more readable when using conrefs.*/
+
+*[class~="task/substeps"] > *[class~="task/substep"][conref]:before,
+*[class~="task/substeps"] > *[class~="task/substep"][conkeyref]:before{
+	display:none;  
+}
+
+*[class~="task/substeps"] > *[class~="task/substep"][conref] > *,
+*[class~="task/substeps"] > *[class~="task/substep"][conkeyref] > *{
+	display:none;  
+}
+
+*[class~="task/steps"] > *[class~="task/step"][conref]:before,
+*[class~="task/steps"] > *[class~="task/step"][conkeyref]:before {
+	display:none;  
+}
+
+*[class~="task/steps"] > *[class~="task/step"][conref] > * ,
+*[class~="task/steps"] > *[class~="task/step"][conkeyref] > * {
+	display:none;  
+}
+
+/*EXM-16989 Some conref cases end*/

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dita xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="urn:oasis:names:tc:dita:xsd:ditabase.xsd">
+  <topic id="topic_${id}">
+    <title>Topic title</title>
+    <body>
+      <p/>
+    </body>
+  </topic>
+  <task id="task_${id}">
+    <title>Task title</title>
+    <taskbody>
+      <steps>
+        <step>
+          <cmd/>
+        </step>
+      </steps>
+    </taskbody>
+  </task>
+  <concept id="concept_${id}">
+    <title>Concept title</title>
+    <conbody>
+      <p/>
+    </conbody>
+  </concept>
+  <reference id="reference_${id}">
+    <title>Reference title</title>
+    <refbody>
+      <properties>
+        <prophead>
+          <proptypehd>Type</proptypehd>
+          <propvaluehd>Value</propvaluehd>
+          <propdeschd>Description</propdeschd>
+        </prophead>
+        <property/>
+      </properties>
+    </refbody>
+  </reference>
+</dita>

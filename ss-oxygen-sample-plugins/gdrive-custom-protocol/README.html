@@ -1,0 +1,128 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Google Drive integration plugin</title>
+</head>
+<body>
+        <h1>Google Drive integration plugin</h1>
+        <div>
+            <p> This plugin installs a protocol handler for a protocol called <b>gdrive</b> in
+                &lt;oXygen/>. That enables &lt;oXygen/> to open resources with a URL of the form:
+                    <code>gdrive://${userid}/path/to/file</code> where <b>${userid}</b> is the id of
+                the user in whose Drive the file is located. </p>
+            <p>This plugin provides a standard Java URL stream handler class
+                (URLStreamHandlerPluginExtension) which uses the <a
+                    href="https://developers.google.com/drive/v2/reference/">Google Drive API</a> to
+                make connections to the handled URLs.</p>
+            <p>This plugin contains also the classes used to manage the OAuth flow and to store the
+                user's token which need to be linked in the <a
+                    href="../../ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml">web.xml</a>
+                configuration file.</p>
+            <p>It integrates with the Google Drive UI and contributes the <b>Open With</b> and
+                    <b>Create New</b> actions in the Google Drive user interface. The <b>Create
+                    New</b> action redirects to an HTML page which allows the user to choose the
+                template from which we should start, upload it to Google Drive and then launch the
+                editor. </p>
+        </div>
+        <h3>Classes summary</h3>
+        <ul>
+            <li><b>AuthCode</b>: The servlet responsible for receiving the OAuth token from Google
+                Drive. This servlet should be linked in the <a
+                    href="../../ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml">web.xml</a>
+                configuration file to handle the <b>redirect URL</b>. <p>The snippet in
+                        <b>web.xml</b> where the servlet is linked to an URL, looks like the one
+                    below:</p><pre>  &lt;!--
+    Servlet that is called back by the OAuth system with the user code.
+    -->
+  &lt;servlet>
+    &lt;servlet-name>Google Drive OAuth Callback&lt;/servlet-name>
+    &lt;servlet-class>com.oxygenxml.examples.gdrive.AuthCode&lt;/servlet-class>
+  &lt;/servlet>
+  &lt;servlet-mapping>
+    &lt;servlet-name>Google Drive OAuth Callback&lt;/servlet-name>
+    &lt;url-pattern>/gdrive/oauth_callback&lt;/url-pattern>
+  &lt;/servlet-mapping></pre><p>If
+                    your server runs on <b>localhost:8080</b>, this means that the
+                        <b>redirectURL</b> is actually
+                        <b>http://localhost:8080/storage-services-oxy-integration/gdrive/oauth_callback</b>.
+                    This URL should be specified in the <a
+                        href="https://console.developers.google.com/project">Google Developer
+                        Console</a> as described in the <a href="#setup">Credentials Setup</a>
+                    section below.</p></li>
+            <li><b>Credentials</b>: The class used to load the Google Drive application secrets:
+                application key, application secret and the redirect URL from a configuration file. </li>
+            <li><b>CustomProtocolPlugin, CustomProtocolURLHandlerExtension</b>: The plugin
+                classes.</li>
+            <li><b>GDriveUrlStreamHandler, GDriveUrlConnection</b>: used to map gdrive:// URLs to
+                Google Drive files, make the actual communication with Google Drive and implements
+                the URLStreamHandler. </li>
+            <li><b>GDriveOperation</b>: An operation of Google Drive files, which may be retried if
+                the OAuth token expired and needs to be refreshed. </li>
+            <li><b>DbxManagerFilter</b>: The user manager which keeps track of the user on behalf of
+                which the current request is executing. </li>
+            <li><b>EntryPoint</b>: The entry point used for opening a file or creating a new file.
+                As configured in the <b>web.xml</b> file, this servlet is usually bound to the <b>
+                    Open URL</b>:
+                    <b>http://127.0.0.1:8080/storage-services-oxy-integration/gdrive/start</b>.<p><b>Note:</b>
+                    This URL should use <b>127.0.0.1</b> instead of <b>localhost</b> because the <a
+                        href="https://console.developers.google.com/project">Google Developer
+                        Console</a> does not allow such a value.</p></li>
+            <li><b>TokenDb</b>: A simple db implemented on top of a .properties file.</li>
+            <li><b>UserData</b>: Details about an user, including its id and display name.</li>
+        </ul>
+        <h3>Implementation details</h3>
+        <p>When the user saves the file, the existing version is overwritten even if it was modified
+            since the user last opened that file. However, all the versions of the file remain in
+            Google Drive's history.</p>
+        <p>In Google Drive, the files and folders hierarchy is represented as a directed acyclic
+            graph rather than as a tree, this makes resolving relative references hard. For this
+            reason, we cannot open files with more than one ancestors on each level, and files which
+            have siblings with the same name.</p>
+        <p>In Google Drive there are two kinds of files: files located in the user's Drive and files
+            shared with the user. The path to the file in the URL for the former begins with
+                <b>/home</b> and for the later with <b>/shared</b></p>
+        <p>In XML projects, the documents usually have references to other files (schema files,
+            xi:includes, etc.) and an action of the user may need access to multiple files. In order
+            to access user's files Google gives us a token that expires after about an hour, in
+            order to avoid the situation in which the user's action needs to be aborted due to an
+            expired token, we request a permanent token. This has the side effect that user is asked
+            to allow our application access his data while his device is turned off. However, we
+            access the user's data only in response to user's actions. </p>
+        <h3 id="setup">Credentials Setup</h3>
+        <p>In order to communicate with the Google Drive service, you need to setup a project in the
+                <a href="https://console.developers.google.com/project">Google Developer
+            Console</a>. </p>
+        <p>Then, in the <b>APIs</b> submenu, you should enable the <b>Drive SDK</b>, <b>Drive
+                API</b> and <b>Google+ API</b>. The Google+ API is used to retrieve the author name.
+                <img src="img/enable_api.png" />
+        </p><p>The <b>Drive API</b> should be further customized, by accessing the settings menu by
+            clicking on the gear button near the <b>Drive API</b> label: <img
+                src="img/drive_api_settings.png" alt="drive_api_settings.png" />.</p><p>In the
+            settings page, you should fill in the <b>Application Name</b>, <b>Short Description</b>,
+                <b>Full Description</b> and upload several icons for the application. In the
+                <b>Drive Integration</b> section you should change <b>only</b> the following
+            settings:</p><ul>
+            <li><b>Open URL (Required) :</b> - The URL to which the <b>EntryPoint</b> servlet is
+                bound, as described above.</li>
+            <li><b>Default MIME Types:</b> - <i>text/xml</i>
+            </li>
+            <li><b>Default File Extensions:</b> - <i>xml, dita, ditamap</i></li>
+            <li><b>Create With:</b> - The URL to which the <b>EntryPoint</b> servlet is bound, as
+                described above.</li>
+            <li><b>Mobile Browser Support</b> - <i>checked</i></li>
+        </ul><p>The credentials of the app, can be found in the <b>Credentials</b> submenu. You
+            should <b>Create new Client ID</b>. The <b>Redirect URI</b> should be the URL where the
+                <b>AuthCode</b> is bound, as described above. The <b>Authorized Javascript
+                Origins</b> field is not important for us; leave it as it is.</p>
+        <img src="img/create_client_id.png" />
+        <p>You, then should download the credentials in JSON format, by using the <b>Download
+                JSON</b> button in the GUI.</p><p><b>Note:</b> Please make sure that you download
+            the credentials for the <b>Client ID</b> that you just created.</p>
+        <img src="img/download_credentials.png" />
+        <p> The downloaded file should be placed at the following path
+                <b>oxygens-sample-webapp/src/main/webapp/WEB-INF/gdrive-secrets.json</b></p>
+        <h4>See It in Action</h4><p>In order to install the application in your <b>Google Drive</b>
+            account, you can go to <a
+                href="http://127.0.0.1:8080/storage-services-oxy-integration/gdrive/start"
+                >http://127.0.0.1:8080/storage-services-oxy-integration/gdrive/start</a> and follow
+            the instructions there.</p></body>
+</html>

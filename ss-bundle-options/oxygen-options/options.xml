@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serialized version="14.0" xml:space="preserve">
+	<map>
+		<entry>
+			<String>first.run.v14.0</String>
+			<Boolean>false</Boolean>
+		</entry>
+		<entry>
+			<String>author.quick.up.down.navigation</String>
+			<Boolean>true</Boolean>
+		</entry>
+		<entry>
+			<String>validation.scenarios</String>
+			<validationScenario-array/>
+		</entry>
+		<entry>
+			<String>author.show.comments</String>
+			<Boolean>false</Boolean>
+		</entry>
+	</map>
+</serialized>

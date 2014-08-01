@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.oxygenxml.samples</groupId>
+		<artifactId>webapp-storage-services-integration</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>ss-bundle-plugins</artifactId>
+	<dependencies>
+		<!-- You can configure here all the plugins you want to use in an oXygen 
+			installation: 
+				- standalone - supports all plugins 
+				- webapp - supports only the custom protocol plugin 
+				- applet - the applet supports only workspace 
+					access plugins (for enabling a custom protocol see the Java source code of 
+					the applet.) -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gdrive-custom-protocol</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<classifier>plugin</classifier>
+			<scope>provided</scope>
+		</dependency>
+		
+       <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dbx-custom-protocol</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>plugin</classifier>
+            <scope>provided</scope>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>extract-plugin-zip-artifacts</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludes>META-INF/**</excludes>
+							<outputDirectory>${project.build.directory}/deps/</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<classifier>plugin</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy file="${project.basedir}/plugin.dtd" toFile="${project.build.directory}/deps/plugin.dtd" force="true" />
+								<zip destfile="${project.build.directory}/classes/plugins.zip">
+									<zipfileset dir="${project.build.directory}/deps" includes="**/*" />
+								</zip>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

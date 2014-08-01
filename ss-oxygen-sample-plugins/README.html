@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>oXygen Sample Plugins</title>
+</head>
+<body>
+<h1>oXygen WebApp sample plugins</h1>
+<section><h2>General structure</h2><p>This project includes two <b>URLHandler</b> oXygen plugins
+                used to open and save files located in <a href="gdrive-custom-protocol/README.html"
+                    >Google Drive</a> and <a href="dbx-custom-protocol/README.html"
+                >Dropbox</a>.</p><p>The general strategy used to communicate with such file storage
+                services is to implement a handler to be used by oXygen every time it wants to
+                retrieve and save a file specified by an URL. In such a handler, there is no
+                information about the user trying to access the files, so we encoded the id of the
+                user at the beginning of the url. For example, an URL pointing to a file on dropbox
+                has the form: <b>dbx://user_id/path/to/file.xml</b>.</p><p>Now, another kind of
+                problem occurs: an user may pass to oXygen an URL containing the ID of another user,
+                causing the so-called <a href="http://en.wikipedia.org/wiki/Confused_deputy_problem"
+                    >Confused Deputy Problem</a>. In order to avoid this problem, we keep track of
+                the current user using a cookie and we always compare the current user with the user
+                which is the owner of the requested file.</p><p>This user tracking is implemented in
+                a servlet Filter which need to be added to the webapp configuration (web.xml file).
+                The OAuth authorization system requires the webapp to have several entry points to
+                which the remote server (Google Drive or Dropbox) comunicates tokens. These are
+                implemented also as servlets that need to be added to the webapp configuration
+                file.</p>
+            <p>A snippet of the <b>web.xml</b> file used to bind the Dropbox servlets and filters is
+                presented below.</p><pre>    &lt;!--
+      Filter responsible with storing the drive of the current user.
+    -->
+    &lt;filter>
+        &lt;filter-name>Dropbox credentials manager&lt;/filter-name>
+        &lt;filter-class>com.oxygenxml.examples.dbx.DbxManagerFilter&lt;/filter-class>
+    &lt;/filter>
+    &lt;filter-mapping>
+        &lt;filter-name>Dropbox credentials manager&lt;/filter-name>
+        &lt;!-- 
+          For eventy REST request, we need to setup the credentials of the current
+          user so that they can be used from the URLStreamHandler.
+         -->
+        &lt;url-pattern>/rest/*&lt;/url-pattern>
+    &lt;/filter-mapping>    
+    
+    &lt;!--
+      Servlet that is called back by the OAuth system with the user code.
+    -->
+    &lt;servlet>
+        &lt;servlet-name>Dropbox OAuth Callback&lt;/servlet-name>
+        &lt;servlet-class>com.oxygenxml.examples.dbx.AuthCode&lt;/servlet-class>
+    &lt;/servlet>
+    &lt;servlet-mapping>
+        &lt;servlet-name>Dropbox OAuth Callback&lt;/servlet-name>
+        &lt;url-pattern>/dbx/oauth_callback&lt;/url-pattern>
+    &lt;/servlet-mapping>
+    
+    &lt;!--
+      Servlet that is called by Dropbox when a user creates a new
+      document or opens an existing one.
+    -->
+    &lt;servlet>
+        &lt;servlet-name>Dropbox Entry Point&lt;/servlet-name>
+        &lt;servlet-class>com.oxygenxml.examples.dbx.EntryPoint&lt;/servlet-class>
+    &lt;/servlet>
+    &lt;servlet-mapping>
+        &lt;servlet-name>Dropbox Entry Point&lt;/servlet-name>
+        &lt;url-pattern>/dbx/start&lt;/url-pattern>
+    &lt;/servlet-mapping></pre></section>
+</body>
+</html>

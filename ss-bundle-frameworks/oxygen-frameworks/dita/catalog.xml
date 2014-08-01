@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN" "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <nextCatalog catalog="DITA-OT/catalog-dita.xml" />
+  <!-- Useful to edit and debug DITA FO XSLs -->
+  <nextCatalog catalog="DITA-OT/demo/fo/cfg/catalog.xml" />
+</catalog>
