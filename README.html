@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>oXygen WebApp storage services integration</title>
+  </head>
+  <body>
+    <h1>oXygen WebApp storage services integration</h1>
+    <p>This project is an example integration of the oXygen WebApp with two of the most popular online file storage
+        services: Google Drive and Dropbox. </p>
+        
+    <section>
+        <h2>License</h2>
+        <p>The license of this project can be found at http://www.oxygenxml.com/sdk_agreement.html.</p>
+    </section>
+    
+    <section>
+        <h2>The contents of this project</h2>
+
+        This project is structured as a multi-module Maven project with the following submodules:
+        <ul>
+            <li>
+                <a href="ss-oxygen-sample-plugins/README.html">ss-oxygen-sample-plugins</a> :
+                You can find here a the plugins used to communicate with
+                    <a href="ss-oxygen-sample-plugins/gdrive-custom-protocol/README.html">Google Drive</a> and
+                    <a href="ss-oxygen-sample-plugins/dbx-custom-protocol/README.html">Dropbox</a>.
+                    Please read the corresponding documentation in order to set them up properly.
+            </li>
+            <li>
+                <a href="ss-oxygen-sample-webapp/README.html">ss-oxygen-sample-webapp</a>:
+                This module builds the WebApp artifact and contains additional HTML pages that allow the
+                user to choose the files he wants to edit. It also contains several configuration files which
+                are described in more detail in the corresponding documentation.
+            </li>
+            <li>
+                <b>ss-bundle-frameworks:</b> This module contains the frameworks that will be available in the WebApp.
+                In order to add additional frameworks, you just need to copy them in the
+                <b>ss-bundle-frameworks/oxygen-frameworks/</b> folder.
+            </li>
+            <li>
+                <b>ss-bundle-options:</b> This module contains the oXygen options.
+            </li>
+            <li>
+                <b>ss-bundle-plugins:</b> Just a wrapper module used to bundle the plugins in a single .zip file.
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>How to build the project</h2>
+
+        <p>First of all, in order to communicate with Google Drive and Dropbox, 
+        you need to register an application with Google and Dropbox following their
+        specific mechanism. You can find more details in the corresponding plugin's
+        README file.</p>
+
+        <p>In order to build all the artifacts, you need to setup Maven to use the oXygen
+                repository. More details can be found on the oXygen <a
+                    href="http://oxygenxml.com/oxygen_sdk_maven.html#maven_sdk_configuration"
+                    >website</a>. After that, running the following command will build all
+                artifacts.</p>
+        <pre>mvn install</pre>
+        <p>At the end you can find the resulting <b>.war</b> file in the
+                    <b>ss-oxygen-sample-webapp/target/</b> folder. </p>
+            <p><b>Note:</b> If you want to test only one of the two integration, comment out from
+                the <a href="ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml">web.xml</a>
+                file the two servlets and one filter that correspond to the integration that you are
+                not intereseted in. For example, in the <b>Dropbox</b> case, the filter <b>Dropbox
+                    credentials manager</b> and the two servlets <b>Dropbox OAuth Callback</b> and
+                    <b>Dropbox Entry Point</b>.</p>
+            <h3>Deploying the webapp</h3>
+            <p>You can now copy the <b>.war</b> file in the <b>webapps</b> folder of your Tomcat
+                instance. The application can now be accessed at <a
+                    href="http://localhost:8080/oxygen-storage-services-integration/"
+                    >http://localhost:8080/oxygen-storage-services-integration/</a>.</p>
+            <p><b>Note:</b> The version 16.0.0 of the webapp does not work with Tomcat 8.</p>
+            <p><b>Note:</b> Before any change to the webapp, please stop and start the Tomcat
+                instance again. The oXygen WebApp does not support hot reload.</p>
+    </section>
+  </body>
+</html>
