@@ -58,7 +58,7 @@ public class Credentials {
   /**
    * Initialize the credentials from a JSON file.
    * 
-   * @param secretsJsonFile The input stream from which the secrets in JSON 
+   * @param secretsStream The input stream from which the secrets in JSON 
    * format can be read.
    */
   public static void setCredentialsFromStream(InputStream secretsStream) throws FileNotFoundException, IOException {
