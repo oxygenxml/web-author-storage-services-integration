@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxException.InvalidAccessToken;
+import com.dropbox.core.DbxException.NetworkIO;
 import com.dropbox.core.DbxWriteMode;
 
 
@@ -102,7 +103,17 @@ public class DbxUrlConnection extends HttpURLConnection {
    * Code to handle an exception while downloading the file.
    */
   private void exceptionWhileConnecting(Exception e) {
+    boolean invalidAccessToken = false;
     if (e instanceof InvalidAccessToken) {
+      invalidAccessToken = true;
+    } else if (e instanceof NetworkIO && e.getMessage().indexOf("401") != -1) {
+      // The oXygen HTTP protocol implementation may throw an exception
+      // instead of returning 401. The error message will contain the "401" 
+      // message.
+      invalidAccessToken = true;
+    }
+    
+    if (invalidAccessToken) {
       try {
         DbxManagerFilter.authorizationFailedForUser(userId);
       } catch (IOException ex) {
