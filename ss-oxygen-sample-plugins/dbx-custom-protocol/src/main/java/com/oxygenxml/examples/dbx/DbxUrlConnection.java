@@ -130,10 +130,17 @@ public class DbxUrlConnection extends HttpURLConnection {
    */
   @Override
   public synchronized InputStream getInputStream() throws IOException {
-    if (downloadException != null) {
-      throw downloadException;
+    if (doInput) {
+      // Make sure the connection is connected.
+      connect();
+      if (downloadException != null) {
+        throw downloadException;
+      } else {
+        return new ByteArrayInputStream(downloadedBytes);
+      }
     } else {
-      return new ByteArrayInputStream(downloadedBytes);
+      logger.warn("Dbx output connection used for input");
+      return new ByteArrayInputStream(new byte[0]);
     }
   }
 
