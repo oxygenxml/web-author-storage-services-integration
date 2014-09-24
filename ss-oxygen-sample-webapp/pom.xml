@@ -47,7 +47,7 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>bundle-frameworks</artifactId>
+      <artifactId>ss-bundle-frameworks</artifactId>
       <version>${project.parent.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -92,7 +92,7 @@
             <!-- Add the frameworks directories. -->
             <overlay>
               <groupId>${project.parent.groupId}</groupId>
-              <artifactId>bundle-frameworks</artifactId>
+              <artifactId>ss-bundle-frameworks</artifactId>
               <type>jar</type>
               <targetPath>WEB-INF/</targetPath>
             </overlay>
