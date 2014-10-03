@@ -69,8 +69,9 @@ public class GDriveManagerFilter implements Filter {
    * @param userId The user id.
    * 
    * @return The drive.
+   * @throws AuthorizationRequiredException
    */
-  public static UserData getCurrentUserData(String userId) {
+  public static UserData getCurrentUserData(String userId) throws AuthorizationRequiredException {
     UserData fileUserDrive = getUserDataUnauthenticated(userId);
     UserData currentUserDrive = currentUserData.get();
     if (currentUserDrive != null && currentUserDrive != fileUserDrive) {
@@ -92,6 +93,29 @@ public class GDriveManagerFilter implements Filter {
   
   
   /**
+   * Returns the status code of the HTTP request that thrown the given exception
+   * or 0 if it cannot be determined.
+   * 
+   * @param e The exception.
+   * 
+   * @return The status code, or 0 if it could not be determined.
+   */
+  private static int getStatusCodeFromException(IOException e) {
+    // Our protocol handlers return HttpExcptionWithDetails.
+    if (e instanceof HttpExceptionWithDetails) {
+      return ((HttpExceptionWithDetails) e).getReasonCode();
+    }
+    
+    // Standard ones return HttpResponseException.
+    if (e instanceof HttpResponseException) {
+      return ((HttpResponseException) e).getStatusCode();
+    }
+    
+    return 0;
+  }
+  
+  
+  /**
    * Executes the given operation, if it fails with authorization error, the token for 
    * the specified user is refreshed and the operation is retried.
    * 
@@ -99,29 +123,18 @@ public class GDriveManagerFilter implements Filter {
    * @param operation The operation.
    * 
    * @throws Exception If it fails.
+   * @throws AuthorizationRequiredException
    */
-  public static <T> T executeWithRetry(String userId, GDriveOperation<T> operation) throws IOException {
+  public static <T> T executeWithRetry(String userId, GDriveOperation<T> operation) 
+      throws IOException, AuthorizationRequiredException {
     try {
       UserData userData = getCurrentUserData(userId);
       return operation.executeOperation(userData.getDrive());
     } catch (IOException e) {
-      boolean shouldRetry = true;
-      // Our protocol handlers return HttpExcptionWithDetails.
-      if (e instanceof HttpExceptionWithDetails) {
-        shouldRetry = false;
-        if (((HttpExceptionWithDetails) e).getReasonCode() == HttpServletResponse.SC_UNAUTHORIZED) {
-          shouldRetry = true;
-        }
-      }
-      // Standard ones return HttpResponseException.
-      if (e instanceof HttpResponseException) {
-        shouldRetry = false;
-        if (((HttpResponseException) e).getStatusCode() == HttpServletResponse.SC_UNAUTHORIZED) {
-          shouldRetry = true;
-        }
-      }
-      
-      if (shouldRetry) {
+      int statusCode = getStatusCodeFromException(e);
+      // If the user was not authorized, or we did not manage to find the cause
+      // of the error, we retry the operation.
+      if (statusCode == HttpServletResponse.SC_UNAUTHORIZED || statusCode == 0) {
         logger.debug("User " + userId + " authorization expired.");
         userConnections.invalidate(userId);
         logger.debug("retrying operation....");
@@ -142,8 +155,10 @@ public class GDriveManagerFilter implements Filter {
    * @param userId the user id.
    * 
    * @return The drive.
+   *
+   * @throws AuthorizationRequiredException
    */
-  private synchronized static UserData getUserDataUnauthenticated(String userId) {
+  private synchronized static UserData getUserDataUnauthenticated(String userId) throws AuthorizationRequiredException {
     UserData userData = null;
     if (userId != null) {
       Optional<UserData> maybeUserData = userConnections.getIfPresent(userId);
@@ -169,8 +184,10 @@ public class GDriveManagerFilter implements Filter {
    * Try to load the credential from the database.
    * 
    * @param userId The user id to look up.
+   * 
+   * @throws AuthorizationRequiredException
    */
-  private static void tryToLoadFromDb(String userId) {
+  private static void tryToLoadFromDb(String userId) throws AuthorizationRequiredException {
     String refreshToken = tokenDb.loadToken(userId);
     if (refreshToken != null) {
       logger.debug("Found refresh token: " + refreshToken);
@@ -179,7 +196,14 @@ public class GDriveManagerFilter implements Filter {
         logger.debug("Need to refresh token with 'refresh token': " + refreshToken);
         GoogleRefreshTokenRequest tokenReqeust = 
             Credentials.getInstance().createRefreshTokenReqeust(refreshToken);
-        GoogleTokenResponse tokenResponse = tokenReqeust.execute();
+        GoogleTokenResponse tokenResponse;
+        try {
+          tokenResponse = tokenReqeust.execute();
+        } catch (IOException e) {
+          // The token refresh failed - user should re-authorize our app. 
+          tokenDb.removeToken(userId);
+          throw new AuthorizationRequiredException();
+        }
         
         logger.debug("Token refreshed: " + tokenResponse.toPrettyString());
         setCredential(tokenResponse);
@@ -234,7 +258,14 @@ public class GDriveManagerFilter implements Filter {
 	  // Find the user on behalf of which we are executing.
 	  String userId = AuthCode.getUserId(httpRequest);
 	  logger.debug("Request from user: " + userId);
-    UserData service = getUserDataUnauthenticated(userId);
+    UserData service = null;
+    try {
+      service = getUserDataUnauthenticated(userId);
+    } catch (AuthorizationRequiredException e) {
+      // The uers revoked the authorization while editing.. 
+      // We do not attempt any recovery.
+      logger.warn("User " + userId + " revoked access to our app while editing.");
+    }
     logger.debug("Found drive " + service);
     
     // Set the current drive if there is one available for the current user.

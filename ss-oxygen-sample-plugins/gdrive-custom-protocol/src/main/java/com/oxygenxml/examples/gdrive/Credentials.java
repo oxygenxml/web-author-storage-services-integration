@@ -26,7 +26,7 @@ import com.google.api.services.plus.Plus;
  * Class that stores the details of our Google API app.
  */
 public class Credentials {
-  private static final String APPLICATION_NAME = "oXygen Author Webapp";
+  private static final String APPLICATION_NAME = "oXygen XML Author WebApp";
   /**
    * Logger for logging.
    */

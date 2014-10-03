@@ -50,10 +50,39 @@ public class TokenDb {
     Properties props = loadProps();
     props.setProperty(userId, token);
     
-    FileOutputStream outputStream = new FileOutputStream(propsFile);
-    props.store(outputStream, "");
-    outputStream.close();
+    persist(props);
   }
+
+  /**
+   * Persists the properties to the on-disk file.
+   * 
+   * @param props The properties.
+   * 
+   * @throws FileNotFoundException If the on-disk file cannot be found.
+   * @throws IOException If an error occurs while storing the props.
+   */
+  private void persist(Properties props) throws FileNotFoundException, IOException {
+    FileOutputStream outputStream = new FileOutputStream(propsFile);
+    try {
+      props.store(outputStream, "");
+    } finally {
+      outputStream.close();
+    }
+  }
+  
+  /**
+   * Remove the mapping for the given user id.
+   * 
+   * @param userId The user id.
+   * 
+   * @throws IOException
+   */
+  public void removeToken(String userId) throws IOException {
+    Properties props = loadProps();
+    props.remove(userId);
+    persist(props);
+  }
+
 
   /**
    * Load the token from the db.

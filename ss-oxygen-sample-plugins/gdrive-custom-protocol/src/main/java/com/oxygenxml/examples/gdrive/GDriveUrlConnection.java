@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 
 import com.google.api.client.http.FileContent;
@@ -97,20 +99,28 @@ public class GDriveUrlConnection extends HttpURLConnection {
           throw new FileNotFoundException();
         }
         
-        GDriveManagerFilter.executeWithRetry(this.userId, new GDriveOperation<Void>() {
-          @Override
-          public Void executeOperation(Drive drive) throws IOException {
-            request = drive.getRequestFactory().buildGetRequest(new GenericUrl(fileDownloadUrl));
-            response = request.execute();   
-            return null;
-          }
-        });
+        try {
+          GDriveManagerFilter.executeWithRetry(this.userId, new GDriveOperation<Void>() {
+            @Override
+            public Void executeOperation(Drive drive) throws IOException {
+              request = drive.getRequestFactory().buildGetRequest(new GenericUrl(fileDownloadUrl));
+              response = request.execute();   
+              return null;
+            }
+          });
+          
+          // init base class fields.
+          responseCode = response.getStatusCode();
+          responseMessage = response.getStatusMessage();
+        } catch (AuthorizationRequiredException e) {
+          logger.warn("User revoked access while editing.", e);
+          
+          responseCode = HttpServletResponse.SC_UNAUTHORIZED;
+          responseMessage = "Access revoked during editing";
+        }
         
         logger.debug("Request executed");
         
-        // init base class fields.
-        responseCode = response.getStatusCode();
-        responseMessage = response.getStatusMessage();
       }
     }
   }
@@ -229,6 +239,8 @@ public class GDriveUrlConnection extends HttpURLConnection {
               return null;
             }
           });  
+        } catch (AuthorizationRequiredException e) {
+          logger.warn("Access revoked during editing.", e);
         } finally {
           tmpFile.delete();
           logger.debug("deleted tmp file");

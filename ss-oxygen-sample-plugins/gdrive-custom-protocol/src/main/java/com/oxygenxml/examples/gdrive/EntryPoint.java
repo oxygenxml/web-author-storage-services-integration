@@ -82,25 +82,27 @@ public class EntryPoint extends HttpServlet {
     
     String userId = AuthCode.getUserId(httpRequest);
     logger.debug("Checking user " + userId + " for authorization");
-    UserData userData = GDriveManagerFilter.getCurrentUserData(userId);
+    UserData userData = null;
+    try {
+      userData = GDriveManagerFilter.getCurrentUserData(userId);
+    } catch (AuthorizationRequiredException e) {
+      logger.debug("Access revoked - will request again from the user.");
+    }
     logger.debug("Found user data: " + userData);
    
-    if (stateJson == null || userData == null ) {
+    if (stateJson == null || userData == null) {
       // Ask the user for authorization if he comes from the Open With or Create
       // actions (stateJson != null) and we do not have an authorization token, or
       // if the user starts from this page directly.
-      logger.debug("Authorizing user.");
-      GoogleAuthorizationCodeRequestUrl redirectUri = 
-          Credentials.getInstance().createAuthorizationCodeRequestUrl();
+      String redirectUri = null;
       if (stateJson != null) {
-        redirectUri.setState(httpRequest.getRequestURI() + "?state=" + stateJson);
+        redirectUri = httpRequest.getRequestURI() + "?state=" + stateJson;
       } else {
         // User landed on this page and our app is authorized, teach the user
         // how to use the Google drive app. 
-        redirectUri.setState("gdrive.html");
+        redirectUri = "gdrive.html";
       }
-      String authorizationUrl = redirectUri.build();
-      httpResponse.sendRedirect(authorizationUrl);
+      sendAuthorizationRequest(httpResponse, redirectUri);
     } else {
       if (stateJson != null) {
         State state = new State(stateJson);
@@ -121,7 +123,14 @@ public class EntryPoint extends HttpServlet {
               fileName = generateFileName();
             }
             
-            filePath = createNewTopic(state.folderId, fileName, url, userId);
+            try {
+              filePath = createNewTopic(state.folderId, fileName, url, userId);
+            } catch (AuthorizationRequiredException e) {
+              // Ask the user for authorization.
+              String redirectURL = httpRequest.getRequestURI() + "?state=" + stateJson;
+              sendAuthorizationRequest(httpResponse, redirectURL);
+              return;
+            }
             openInWebapp(httpResponse, userId, filePath, userData.getUserName());
           } else {
             logger.debug("Redirecting the user to choose the template.");
@@ -132,13 +141,37 @@ public class EntryPoint extends HttpServlet {
         } else if (OPEN_ACTION.equals(state.action)) {
           // Open the specified file.
           Iterator<String> idsIterator = state.ids.iterator();
-          filePath = computeFilePath(idsIterator.next(), userId);
+          try {
+            filePath = computeFilePath(idsIterator.next(), userId);
+          } catch (AuthorizationRequiredException e) {
+            // Ask the user for authorization.
+            String redirectURL = httpRequest.getRequestURI() + "?state=" + stateJson;
+            sendAuthorizationRequest(httpResponse, redirectURL);
+            return;
+          }
           logger.debug("Opening the file in the webapp: " + filePath);
           openInWebapp(httpResponse, userId, filePath, userData.getUserName());
         }
       }
     }
 	}
+
+	/**
+	 * URL where the user will be redirected after the authorization.
+	 * 
+	 * @param httpResponse The httpResponse to use.
+	 * @param redirectURL The redirect URL.
+	 * 
+	 * @throws IOException If the request fails.
+	 */
+  private void sendAuthorizationRequest(HttpServletResponse httpResponse, String redirectURL) throws IOException {
+    logger.debug("Authorizing user.");
+    GoogleAuthorizationCodeRequestUrl redirectUri = 
+        Credentials.getInstance().createAuthorizationCodeRequestUrl();
+    redirectUri.setState(redirectURL);
+    String authorizationUrl = redirectUri.build();
+    httpResponse.sendRedirect(authorizationUrl);
+  }
 
 	/**
 	 * Generates a file name for a new file.
@@ -244,8 +277,9 @@ public class EntryPoint extends HttpServlet {
    * @return The path relative to the drive.
    * 
    * @throws IOException
+   * @throws AuthorizationRequiredException
    */
-	public String computeFilePath(String fileId, String userId) throws IOException {
+	public String computeFilePath(String fileId, String userId) throws IOException, AuthorizationRequiredException {
 	  logger.debug("determining the path for the file to be opened.");
 	  String path = "";
 	  while (true) {
@@ -292,8 +326,9 @@ public class EntryPoint extends HttpServlet {
 	 * @return The path relative to the drive.
 	 * 
 	 * @throws IOException
+   * @throws AuthorizationRequiredException
 	 */
-	public String createNewTopic(String parentId, String fileName, URL url, String userId) throws IOException {
+	public String createNewTopic(String parentId, String fileName, URL url, String userId) throws IOException, AuthorizationRequiredException {
 	  final File file = new File();
 	  file.setMimeType(GDriveUrlConnection.MIME_TYPE);
 	  file.setTitle(fileName);

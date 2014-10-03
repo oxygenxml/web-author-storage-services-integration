@@ -36,8 +36,12 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     String userId = getUserIdFromUrl(url);
     logger.debug("Opening URL " + url + " for user " + userId + " on thread " + Thread.currentThread().getId());    
     
-    File file;
-    file = getFileToDownload(url, userId);
+    File file = null;
+    try {
+      file = getFileToDownload(url, userId);
+    } catch (AuthorizationRequiredException e) {
+      logger.warn("Authorization revoked while editing", e);
+    }
     if (file == null) {
       throw new FileNotFoundException(url.toExternalForm());
     }
@@ -55,9 +59,11 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @param userId The user on whose drive we look for the file.
    * 
    * @return
+   * 
    * @throws IOException if the file cannot be found on the drive.
+   * @throws AuthorizationRequiredException
    */
-  File getFileToDownload(URL url, String userId) throws IOException {
+  File getFileToDownload(URL url, String userId) throws IOException, AuthorizationRequiredException {
     logger.debug("Looking for file that corresponds to the URL: " + url.toExternalForm());
     String path = url.getPath();
     if (path.charAt(0) != '/') {
@@ -113,8 +119,9 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @return The list of files matching the query.
    * 
    * @throws IOException
+   * @throws AuthorizationRequiredException
    */
-  private List<File> searchSharedFiles(String userId, String fileName) throws IOException {
+  private List<File> searchSharedFiles(String userId, String fileName) throws IOException, AuthorizationRequiredException {
     String query = "title='" + fileName + "' and sharedWithMe and trashed = false";
     return searchForFiles(userId, query);
   }
@@ -129,8 +136,9 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @return The list of files matching the query.
    * 
    * @throws IOException
+   * @throws AuthorizationRequiredException
    */
-  private List<File> searchForFiles(String userId, final String query) throws IOException {
+  private List<File> searchForFiles(String userId, final String query) throws IOException, AuthorizationRequiredException {
     List<File> files = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
       @Override
       public List<File> executeOperation(Drive drive) throws IOException {
@@ -153,8 +161,9 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @return The files that match the query.
    * 
    * @throws IOException If the communication with google fails.
+   * @throws AuthorizationRequiredException
    */
-  List<File> searchFileByNameAndParent(String userId, String fileName, String parentId) throws IOException {
+  List<File> searchFileByNameAndParent(String userId, String fileName, String parentId) throws IOException, AuthorizationRequiredException {
     final String query = "title='" + fileName + "' and '" + parentId + "' in parents and trashed = false";
     List<File> files = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
       @Override

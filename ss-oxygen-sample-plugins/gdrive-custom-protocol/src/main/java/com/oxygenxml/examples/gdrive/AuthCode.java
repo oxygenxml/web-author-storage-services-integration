@@ -66,7 +66,9 @@ public class AuthCode extends HttpServlet {
       response1.sendRedirect(redirectURL);
     } else {
       logger.debug("Error while authorizing user");
-      response1.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Eroare.. ");
+      response1.sendError(HttpServletResponse.SC_UNAUTHORIZED, 
+          "In order to edit your XML files in Google Drive, you need to authorize "
+          + "oXygen XML WebApp first.");
     }
   }
   
