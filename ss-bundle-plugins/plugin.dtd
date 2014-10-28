@@ -10,13 +10,21 @@ Example: ctrl shift E
     -->
 <!ATTLIST extension keyboardShortcut CDATA #IMPLIED>
 <!ATTLIST extension actionName CDATA #IMPLIED>
-<!ELEMENT runtime (#PCDATA | library)*>
+<!ELEMENT runtime (#PCDATA | library | librariesFolder)*>
 <!ELEMENT library (#PCDATA)>
 <!ATTLIST library name CDATA #IMPLIED>
 <!-- doc: The default value is "local"
 When choosing "local" the library is loaded in the plugin's own class loader.
-When choosing "global" the library is loaded in the main Oxygen class loader (as if it would be present in the Oxygen "lib" directory).-->
-<!ATTLIST library scope (global|local) "local">
+When choosing "global" the library is loaded in the main Oxygen class loader as the last library in the list (as if it would be present in the Oxygen "lib" directory).
+When choosing "globalHighPriority" the library is loaded in the main Oxygen class loader as the first library in the list (useful in border cases to patch certain behaviors in the Oxygen JARs).-->
+<!ATTLIST library scope (local|global|globalHighPriority) "local">
+<!-- This elements specified a folder from which all the jar files should be loaded. -->
+<!ELEMENT librariesFolder (#PCDATA)>
+<!-- This should be a path to a local file -->
+<!ATTLIST librariesFolder name CDATA #IMPLIED>
+<!-- doc: The default value is "local".
+The values are the same as for the "library" element.-->
+<!ATTLIST librariesFolder scope (local|global|globalHighPriority) "local">
 <!ELEMENT plugin (#PCDATA | runtime | extension | view | toolbar | property)*>
 <!-- An ID to identify the plugin. -->
 <!ATTLIST plugin id CDATA #REQUIRED>

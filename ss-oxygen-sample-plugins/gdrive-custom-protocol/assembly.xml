@@ -10,23 +10,6 @@
 		<format>jar</format>
 	</formats>
 
-	<fileSets>
-		<fileSet>
-			<directory>etc</directory>
-			<outputDirectory>/etc</outputDirectory>
-			<includes>
-				<include>**/*</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>etc</directory>
-			<outputDirectory>/etc</outputDirectory>
-			<includes>
-				<include>**/*</include>
-			</includes>
-		</fileSet>
-	</fileSets>
-	
 	<files>
 		<file>
 			<source>target/${project.build.finalName}.jar</source>

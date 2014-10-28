@@ -11,10 +11,7 @@
  class="com.oxygenxml.examples.dbx.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">
  <runtime>
-        <library name="lib/${project.build.finalName}.jar" scope="global"/>
-        <library name="lib/jackson-core-2.3.0-rc1.jar" scope="global"/>
-        <library name="lib/guava-17.0.jar" scope="global"/>
-        <library name="lib/dropbox-core-sdk-1.7.6.jar" scope="global"/>
+  <librariesFolder name="lib" scope="global"/>
  </runtime>
  
  <extension type="URLHandler" 

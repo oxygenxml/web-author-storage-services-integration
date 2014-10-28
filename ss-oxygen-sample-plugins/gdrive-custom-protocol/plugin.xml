@@ -11,20 +11,7 @@
  class="com.oxygenxml.examples.gdrive.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">
  <runtime>
-        <library name="lib/${project.build.finalName}.jar" scope="global"/>
-        <library name="lib/google-api-client-1.18.0-rc.jar" scope="global"/>
-        <library name="lib/google-api-services-drive-v2-rev128-1.18.0-rc.jar" scope="global"/>
-        <library name="lib/google-api-services-plus-v1-rev128-1.18.0-rc.jar" scope="global"/>
-        
-        <library name="lib/google-http-client-1.18.0-rc.jar" scope="global"/>
-        <library name="lib/google-http-client-jackson2-1.18.0-rc.jar" scope="global"/>
-        <library name="lib/google-oauth-client-1.18.0-rc.jar" scope="global"/>
-        <library name="lib/jackson-core-2.1.3.jar" scope="global"/>
-        <library name="lib/jsr305-1.3.9.jar" scope="global"/>
-        
-        <library name="lib/gson-2.2.4.jar" scope="global"/>
-        
-        <library name="lib/guava-17.0.jar" scope="global"/>
+        <librariesFolder name="lib" scope="global"/>
  </runtime>
  
  <extension type="URLHandler" 

@@ -4,7 +4,7 @@
 	<parent>
         <groupId>com.oxygenxml.samples</groupId>
 		<artifactId>ss-oxygen-sample-plugins</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>dbx-custom-protocol</artifactId>
 
