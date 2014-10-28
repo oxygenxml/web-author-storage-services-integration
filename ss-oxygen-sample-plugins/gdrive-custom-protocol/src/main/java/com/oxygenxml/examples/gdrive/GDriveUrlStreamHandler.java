@@ -7,6 +7,7 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLStreamHandler;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -73,7 +74,7 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     logger.debug("Path entries: " + Arrays.toString(pathEntries));
     
     File crtFile = null;
-    String parentId = "root";
+    String parentId = null;
     String crtPath = "/";
     // The first element in the path is the userId on behalf of which we 
     // are retrieving the file. The second one is the path type: 'drive', 'shared',
@@ -82,14 +83,25 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     for (int i = 2; i < pathEntries.length; i++) {
       String pathEntry = URLDecoder.decode(pathEntries[i], "UTF-8");
       logger.debug("switching to path " + pathEntry + " with parent id " + parentId);
-      List<File> files;
-      if (i == 2 && EntryPoint.SHARED_PATH_TYPE.equals(pathType)) {
-        logger.debug("searching a shared file");
-        files = searchSharedFiles(userId, pathEntry);
+      List<File> files = Collections.emptyList();
+      
+      if (i == 2) {
+        if (EntryPoint.DRIVE_PATH_TYPE.equals(pathType)) {
+          logger.debug("searching a regular file by id: " + pathEntry);
+          files = Collections.singletonList(searchFileById(userId, pathEntry));
+        } else if (EntryPoint.SHARED_PATH_TYPE.equals(pathType)) {
+          logger.debug("searching a shared file");
+          files = searchSharedFiles(userId, pathEntry);
+        }
+      } else if (i == 3 && EntryPoint.DRIVE_PATH_TYPE.equals(pathType)){
+        // This path entry is the name of the 'root' ancestor. This ancestor
+        // was also identified by ID, so we can skip this path part.
+        continue;
       } else {
-        logger.debug("searching a regular file by name");
-        files = searchFileByNameAndParent(userId, pathEntry, parentId);
+        logger.debug("searching a regular file by name: " + pathEntry);
+        files = searchFileByNameAndParent(userId, pathEntry, parentId);  
       }
+        
       if (files.size() == 0) {
         FileNotFoundException ex = 
             new FileNotFoundException("File " + crtPath + " not found");
@@ -174,6 +186,26 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     return files;
   }
 
+  /**
+   * Searches the drive for a file identified by the given id.
+   * 
+   * @param userId The id of the user on whose drive we are searching.
+   * @param fileId The id of the file we are looking for.
+   * 
+   * @return The file with the given id.
+   * 
+   * @throws IOException If the communication with google fails.
+   * @throws AuthorizationRequiredException
+   */
+  private File searchFileById(String userId, final String fileId) throws IOException, AuthorizationRequiredException {
+    File file = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<File>() {
+      @Override
+      public File executeOperation(Drive drive) throws IOException {
+        return drive.files().get(fileId).execute();
+      }
+    });
+    return file;
+  }
   /**
    * Returns the user id encoded in the URL.
    * 

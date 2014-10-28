@@ -266,8 +266,12 @@ public class EntryPoint extends HttpServlet {
    * between the files. 
    * 
    * If the file is inside the user's drive, the url structure is:
-   * gdrive:///{user_id}/drive/path/to/file.xml
+   * gdrive:///{user_id}/drive/{id_of_root}/path/to/file.xml
    * 
+   * If the file is not linked in the user's drive, the url structure is:
+   * gdrive:///{user_id}/drive/{id_of_unlinked_ancestor}/path/to/file.xml
+   * Note that the unlinked ancestor may be the file itself.
+   *
    * If the file is just shared with the user, the url is:
    * gdrive:///{user_id}/shared/path/to/file.xml
    * 
@@ -296,8 +300,10 @@ public class EntryPoint extends HttpServlet {
 	    List<ParentReference> parents = file.getParents();
 	    if (parents.isEmpty()) {
 	      if (file.getSharedWithMeDate() == null) {
-	        // This file is the root of the user's drive.
-	        path = "/" + DRIVE_PATH_TYPE + path; 
+	        // This file is either the root of the user's drive or another file
+	        // that is not linked in the user's Drive, for example a file shared 
+	        // by link.
+	        path = "/" + DRIVE_PATH_TYPE + "/" + file.getId() + "/" + encodedFileTitle + path; 
 	      } else {
 	        // This file is shared to the user but not linked in the user's drive.
 	        path = "/" + SHARED_PATH_TYPE +"/" + encodedFileTitle + path;
