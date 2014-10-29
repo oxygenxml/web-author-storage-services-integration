@@ -121,6 +121,21 @@
     <filter-name>Access logger</filter-name>
     <filter-class>ro.sync.servlet.config.AccessLoggerFilter</filter-class>
   </filter>
+    <!-- This filter is used to correctly identify and license the user
+       on behalf of which the request is performed. 
+    -->
+  <filter>
+    <filter-name>License enforcer filter</filter-name>
+    <filter-class>ro.sync.ecss.extensions.api.webapp.license.LicenseEnforcerFilter</filter-class>
+    <init-param>
+       <param-name>licensePath</param-name>
+       <param-value>/WEB-INF/license.txt</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>License enforcer filter</filter-name>
+    <url-pattern>/rest/*</url-pattern>
+  </filter-mapping>
   <filter-mapping>
     <filter-name>Request context switcher</filter-name>
     <url-pattern>/rest/*</url-pattern>
@@ -162,7 +177,7 @@
   </context-param>
   <context-param>
     <param-name>log4j-properties-location</param-name>
-    <param-value>WEB-INF/log4j.properties</param-value>
+    <param-value>/WEB-INF/log4j.properties</param-value>
   </context-param>
   <!-- 
     ============================================================================
