@@ -35,7 +35,7 @@ At the end you can find the resulting **.war** file in the **ss-oxygen-sample-we
 Deploying the webapp
 --------------------
 
-You can now copy the **.war** file in the **webapps** folder of your Tomcat instance. The application can now be accessed at [http://localhost:8080/oxygen-storage-services-integration/](http://localhost:8080/oxygen-storage-services-integration/).
+You can now copy the **.war** file in the **webapps** folder of your Tomcat instance. The application can now be accessed at [http://localhost:8080/storage-services-oxy-integration/](http://localhost:8080/storage-services-oxy-integration/).
 
 **Note:** The version 16.0.0 of the webapp does not work with Tomcat 8.
 
