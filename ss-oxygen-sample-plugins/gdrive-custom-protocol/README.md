@@ -103,7 +103,7 @@ JSON** button in the GUI.
 ![Download credentials](img/download_credentials.png)
 
 The downloaded file should be placed at the following path
-`oxygens-sample-webapp/src/main/webapp/WEB-INF/gdrive-secrets.json`
+`ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/gdrive-secrets.json`
 
 See It in Action
 ----------------
