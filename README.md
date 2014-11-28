@@ -30,7 +30,7 @@ In order to build all the artifacts, you need to setup Maven to use the oXygen r
 
 At the end you can find the resulting **.war** file in the **ss-oxygen-sample-webapp/target/** folder.
 
-**Note:** If you want to test only one of the two integration, comment out from the [web.xml](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml) file the two servlets and one filter that correspond to the integration that you are not intereseted in. For example, in the **Dropbox** case, the filter [Dropbox credentials manager](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L6-20) and the two servlets [Dropbox OAuth Callback]((ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L23-36)) and [Dropbox Entry Point](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L38-49).
+**Note:** If you want to test only one of the two integration, comment out from the [web.xml](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml) file the two servlets and one filter that correspond to the integration that you are not interested in. For example, in the **Dropbox** case, the filter [Dropbox credentials manager](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L6-20) and the two servlets [Dropbox OAuth Callback]((ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L23-36)) and [Dropbox Entry Point](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L38-49).
 
 Deploying the webapp
 --------------------
