@@ -75,8 +75,8 @@ API** and **Google+ API**. The Google+ API is used to retrieve the author name.
 
 ![Enabling the Drive API](img/enable_api.png)
 
-The **Drive API** should be further customized, by accessing the settings menu by
-clicking on the gear button near the **Drive API** label: ![Drive API Settings](img/drive_api_settings.png). In the settings page, you should fill in the **Application Name**, **Short Description**, **Full Description** and upload several icons for the application. In the **Drive Integration** section you should change **only** the following
+The **Drive SDK** should be further customized, by accessing the settings menu by
+clicking on the gear button near the **Drive SDK** label. In the settings page, you should fill in the **Application Name**, **Short Description**, **Full Description** and upload several icons for the application. In the **Drive Integration** section you should change **only** the following
 settings:
 
 - **Open URL (Required) :** - The URL to which the **EntryPoint** servlet is
