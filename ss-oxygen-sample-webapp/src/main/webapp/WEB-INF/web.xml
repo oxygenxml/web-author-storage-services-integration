@@ -113,10 +113,6 @@
     <filter-name>Request context switcher</filter-name>
     <filter-class>ro.sync.servlet.config.OxygenContextFilter</filter-class>
   </filter>
-  <filter-mapping>
-    <filter-name>UTF-8 charset enforcer</filter-name>
-    <url-pattern>/rest/*</url-pattern>
-  </filter-mapping>
     <filter>
     <filter-name>Access logger</filter-name>
     <filter-class>ro.sync.servlet.config.AccessLoggerFilter</filter-class>

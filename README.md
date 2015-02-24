@@ -30,12 +30,12 @@ In order to build all the artifacts, you need to setup Maven to use the oXygen r
 
 At the end you can find the resulting **.war** file in the **ss-oxygen-sample-webapp/target/** folder.
 
-**Note:** If you want to test only one of the two integration, comment out from the [web.xml](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml) file the two servlets and one filter that correspond to the integration that you are not intereseted in. For example, in the **Dropbox** case, the filter [Dropbox credentials manager](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L6-20) and the two servlets [Dropbox OAuth Callback]((ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L23-36)) and [Dropbox Entry Point](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L38-49).
+**Note:** If you want to test only one of the two integration, comment out from the [web.xml](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml) file the two servlets and one filter that correspond to the integration that you are not interested in. For example, in the **Dropbox** case, the filter [Dropbox credentials manager](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L6-20) and the two servlets [Dropbox OAuth Callback]((ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L23-36)) and [Dropbox Entry Point](ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/web.xml#L38-49).
 
 Deploying the webapp
 --------------------
 
-You can now copy the **.war** file in the **webapps** folder of your Tomcat instance. The application can now be accessed at [http://localhost:8080/oxygen-storage-services-integration/](http://localhost:8080/oxygen-storage-services-integration/).
+You can now copy the **.war** file in the **webapps** folder of your Tomcat instance. The application can now be accessed at [http://localhost:8080/storage-services-oxy-integration/](http://localhost:8080/storage-services-oxy-integration/).
 
 **Note:** The version 16.0.0 of the webapp does not work with Tomcat 8.
 
