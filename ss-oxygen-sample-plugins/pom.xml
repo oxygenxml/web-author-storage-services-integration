@@ -4,7 +4,7 @@
 	<parent>
 	    <groupId>com.oxygenxml.samples</groupId>
 	    <artifactId>webapp-storage-services-integration</artifactId>
-		<version>0.0.2-SNAPSHOT</version>
+		<version>0.0.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ss-oxygen-sample-plugins</artifactId>
