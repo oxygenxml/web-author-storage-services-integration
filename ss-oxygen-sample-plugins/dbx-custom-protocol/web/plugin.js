@@ -5,14 +5,11 @@
   };
   var url = decodeURIComponent(getUrlParameter("url"));
 
-  //console.log('full url :', url);
   var protoPrefix = "dbx:///";
   if (url.indexOf(protoPrefix) == 0) {
     var partialPath = url.substring(protoPrefix.length);
     var userID = partialPath.substring(0, partialPath.indexOf('/'));
-    console.log('user id :', userID);
     var path = partialPath.substring(userID.length);
-    //console.log('determined path :', path);
 
     var dbxScript = document.createElement('script');
     dbxScript.setAttribute("src", "https://www.dropbox.com/static/api/2/dropins.js");
@@ -57,20 +54,19 @@
         // Required. Called when a user selects an item in the Chooser.
         success: function(files) {
           var link = files[0].link;
-          console.log('decoded link :', decodeURIComponent(link));
 
           var prefix = "https://dl.dropboxusercontent.com/1/view/";
           var codeAndPath = link.substring(prefix.length);
           var path = codeAndPath.substring(codeAndPath.indexOf('/'));
-          console.log('determined path :', path);
+          console.log('image path :', path);
 
           var imageURL = 'dbx:///' + userID + path;
-          console.log('image url :', imageURL);
           chosen(imageURL);
         },
 
         linkType: "direct",
-        multiselect: false
+        multiselect: false,
+        extensions: ['.bmp', '.cr2', '.gif', '.ico', '.ithmb', '.jpeg', '.jpg', '.nef', '.png', '.raw', '.svg', '.tif', '.tiff', '.wbmp', '.webp']
       };
       Dropbox.choose(options);
     };
@@ -94,7 +90,7 @@
     };
 
     workspace.setUrlChooser(new sync.api.DropboxUrlChooser());
-    console.log('set the dropbox url chooser');
+    console.log('seting the dropbox url chooser');
   };
 
 })();

@@ -25,7 +25,13 @@
 			<outputDirectory>/</outputDirectory>
 		</file>
 	</files>
-	
+
+  <fileSets>
+    <fileSet>
+      <directory>web/</directory>
+      <outputDirectory>/web/</outputDirectory>
+    </fileSet>
+  </fileSets>	
 	
 	<!-- In case one of your plugins needs to package its dependencies, use a section like the one below. -->
 	<dependencySets>
