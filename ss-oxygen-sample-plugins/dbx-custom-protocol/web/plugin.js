@@ -5,8 +5,20 @@
   };
   var url = decodeURIComponent(getUrlParameter("url"));
 
-  var protoPrefix = "dbx:///";
-  if (url.indexOf(protoPrefix) == 0) {
+  var protoPrefix = null;
+  var useDbxProtocol = false;
+  if(url.indexOf("dbx:///") == 0) {
+    protoPrefix= "dbx:///";
+    useDbxProtocol = true;
+  } else if(url.indexOf("dbx://") == 0) {
+    protoPrefix= "dbx://";
+    useDbxProtocol = true;
+  } else if(url.indexOf("dbx:/") == 0) {
+    protoPrefix= "dbx:/";
+    useDbxProtocol = true;
+  } 
+  
+  if (useDbxProtocol) {
     var partialPath = url.substring(protoPrefix.length);
     var userID = partialPath.substring(0, partialPath.indexOf('/'));
     var path = partialPath.substring(userID.length);
