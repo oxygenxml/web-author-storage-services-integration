@@ -51,10 +51,10 @@ public class AuthCode extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     DbxWebAuth auth = Credentials.getFlow(request.getSession());
     DbxAuthFinish authFinish;
-    logger.debug("Callback from Dropbox.. " + request.getParameterNames());
     try {
         @SuppressWarnings("unchecked")
         Map<String, String[]> parameterMap = request.getParameterMap();
+        logger.debug("Callback from Dropbox.. " + request.getParameterMap());
         authFinish = auth.finish(parameterMap);
     }
     catch (DbxWebAuth.BadRequestException ex) {
@@ -63,6 +63,7 @@ public class AuthCode extends HttpServlet {
         return;
     }
     catch (DbxWebAuth.BadStateException ex) {
+      logger.debug("Bad state exception", ex);
         // Send them back to the start of the auth flow.
         response.sendRedirect("start");
         return;
