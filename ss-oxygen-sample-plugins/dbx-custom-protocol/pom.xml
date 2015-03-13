@@ -39,6 +39,18 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>checker-framework-repo</id>
+			<url>http://types.cs.washington.edu/m2-repo</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencies>
         <dependency>
            <groupId>com.oxygenxml</groupId>
