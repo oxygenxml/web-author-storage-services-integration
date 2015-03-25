@@ -121,7 +121,9 @@ public class TokenDb {
     try {
       props = loadProps();
       encryptedToken = (String) props.get(userId);
-      decryptedToken = decrypt(encryptedToken);
+      if(encryptedToken != null) {
+        decryptedToken = decrypt(encryptedToken);
+      }
     } catch (IOException e) {
       // Just assume that the token was not found.
       logger.warn(e, e);
