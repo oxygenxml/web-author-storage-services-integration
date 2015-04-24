@@ -95,4 +95,11 @@ public class Credentials {
     APP_SECRET = secrets.getProperty("app_secret");
     REDIRECT_URI = secrets.getProperty("redirect_uri");
   }
+  
+  /**
+   * @return the application key
+   */
+  public static String getAppKey() {
+    return APP_KEY;
+  }
 }

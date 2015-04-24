@@ -308,6 +308,10 @@ public class GDriveManagerFilter implements Filter {
     } catch (IOException e) {
       throw new ServletException("Could not read the client secrets.", e);
     }
+    
+    // Set the client id here so that it can be used from JSP.
+    String clientId = Credentials.getInstance().getClientId();
+    fConfig.getServletContext().setAttribute("gdrive.client.id", clientId);
   }
   
   /**

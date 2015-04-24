@@ -232,6 +232,9 @@ public class DbxManagerFilter implements Filter {
 		} catch (IOException e) {
 			throw new ServletException("Could not read the client secrets.", e);
 		}
+		// Set the app key so that it can be used in JSP.
+		String appKey = Credentials.getAppKey();
+		fConfig.getServletContext().setAttribute("dbx.app.key", appKey);
 	}
 	
 	/**

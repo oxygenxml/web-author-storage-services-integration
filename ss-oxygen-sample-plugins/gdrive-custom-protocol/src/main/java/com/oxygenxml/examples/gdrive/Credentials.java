@@ -174,4 +174,11 @@ public class Credentials {
       .setApplicationName(APPLICATION_NAME)
       .build();
   }
+  
+  /**
+   * @return the client id.
+   */
+  public String getClientId() {
+    return clientId;
+  }
 }
