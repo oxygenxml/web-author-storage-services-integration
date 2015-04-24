@@ -320,7 +320,7 @@ public class GDriveManagerFilter implements Filter {
    * @throws IOException If the password could not be read. 
    */
   private String retriveDBPasword(FilterConfig fConfig) throws IOException {
-    InputStream tokenDbPassword = fConfig.getServletContext().getResourceAsStream("/WEB-INF/dbx-passwd.txt");
+    InputStream tokenDbPassword = fConfig.getServletContext().getResourceAsStream("/WEB-INF/gdrive-passwd.txt");
 
     if(tokenDbPassword == null) {
       return "";
