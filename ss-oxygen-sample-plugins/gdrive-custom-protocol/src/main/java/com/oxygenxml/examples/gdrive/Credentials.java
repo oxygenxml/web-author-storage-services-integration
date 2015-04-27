@@ -66,7 +66,7 @@ public class Credentials {
     GoogleClientSecrets clientSecrets = 
         GoogleClientSecrets.load(jsonFactory, new InputStreamReader(secretsStream));
     Details secrets = clientSecrets.getWeb();
-    logger.debug("Secrets:" + secrets.toPrettyString());
+    logger.debug("Loaded secrets from file.");
     instance = new Credentials(
         secrets.getClientId(), 
         secrets.getClientSecret(), 
