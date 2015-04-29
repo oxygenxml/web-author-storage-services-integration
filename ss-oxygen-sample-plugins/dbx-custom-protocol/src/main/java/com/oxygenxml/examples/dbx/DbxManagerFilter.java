@@ -14,6 +14,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxException;
@@ -207,23 +208,55 @@ public class DbxManagerFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-	  logger.debug("Filter initialized on classloader " + this.getClass().getClassLoader());
-	  
-    File workDir = (File) fConfig.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
-	  File tokenDbFile = new File(workDir, "tokens-dbx.properties");
-    try {
-      tokenDb = new TokenDb(tokenDbFile);
-    } catch (IOException e) {
-      throw new ServletException("Could not create token DB.", e);
-    }
-    
-    InputStream secretsStream = 
-        fConfig.getServletContext().getResourceAsStream("/WEB-INF/dbx-secrets.properties");
-    try {
-      Credentials.setCredentialsFromStream(secretsStream);
-    } catch (IOException e) {
-      throw new ServletException("Could not read the client secrets.", e);
-    }
+		logger.debug("Filter initialized on classloader " + this.getClass().getClassLoader());
+
+		String passwordToEncryptWith = "";
+		try {
+			passwordToEncryptWith = retriveDBPasword(fConfig);
+		} catch (IOException e1) {
+			throw new ServletException("Could not read password", e1);
+		}
+		File workDir = (File) fConfig.getServletContext().getAttribute(JAVAX_SERVLET_CONTEXT_TEMPDIR);
+		
+		File tokenDbFile = new File(workDir, "tokens-dbx.properties");
+		try {
+			tokenDb = new TokenDb(tokenDbFile, passwordToEncryptWith);
+		} catch (IOException e) {
+			throw new ServletException("Could not create token DB.", e);
+		}
+
+		InputStream secretsStream = fConfig.getServletContext().getResourceAsStream("/WEB-INF/dbx-secrets.properties");
+
+		try {
+			Credentials.setCredentialsFromStream(secretsStream);
+		} catch (IOException e) {
+			throw new ServletException("Could not read the client secrets.", e);
+		}
+		// Set the app key so that it can be used in JSP.
+		String appKey = Credentials.getAppKey();
+		fConfig.getServletContext().setAttribute("dbx.app.key", appKey);
+	}
+	
+	/**
+	 * Reads the text file for retrieving password.
+	 * 
+	 * @param fConfig is the filter configuration.
+	 * 
+	 * @return the password.
+	 * @throws IOException If the password could not be read. 
+	 */
+	private String retriveDBPasword(FilterConfig fConfig) throws IOException {
+		InputStream tokenDbPassword = fConfig.getServletContext().getResourceAsStream("/WEB-INF/dbx-passwd.txt");
+		
+		if(tokenDbPassword == null) {
+			return "";
+		}
+		
+		try {
+			return IOUtils.toString(tokenDbPassword);
+		} finally {
+			IOUtils.closeQuietly(tokenDbPassword);
+		}
 	}
 
 }

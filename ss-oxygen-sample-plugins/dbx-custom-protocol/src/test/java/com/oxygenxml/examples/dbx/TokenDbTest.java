@@ -12,10 +12,12 @@ public class TokenDbTest {
 
   private File dbFile;
 
-
+  private String password;
+  
   @Before
   public void setUp() {
     dbFile = new File("token-db.properties");
+    password = "password";
   }
   
   @After
@@ -34,7 +36,7 @@ public class TokenDbTest {
    */
   @Test
   public void testCreateFile() throws Exception {
-    TokenDb tokenDb = new TokenDb(dbFile);
+    TokenDb tokenDb = new TokenDb(dbFile, password);
     String token = "asdasDSAD";
     tokenDb.storeToken("gigi", token);
     assertEquals(token, tokenDb.loadToken("gigi"));
@@ -51,11 +53,11 @@ public class TokenDbTest {
    */
   @Test
   public void testReuseDb() throws Exception {
-    TokenDb tokenDb = new TokenDb(dbFile);
+    TokenDb tokenDb = new TokenDb(dbFile, password);
     String token = "asdasDSAD";
     tokenDb.storeToken("gigi", token);
     
-    tokenDb = new TokenDb(dbFile);
+    tokenDb = new TokenDb(dbFile, password);
     assertEquals(token, tokenDb.loadToken("gigi"));
   }
   
@@ -69,7 +71,7 @@ public class TokenDbTest {
    */
   @Test
   public void testChangeDb() throws Exception {
-    TokenDb tokenDb = new TokenDb(dbFile);
+    TokenDb tokenDb = new TokenDb(dbFile, password);
     String token = "asdasDSAD";
     tokenDb.storeToken("gigi", token);
     assertEquals(token, tokenDb.loadToken("gigi"));
@@ -87,7 +89,7 @@ public class TokenDbTest {
    */
   @Test
   public void testNullToken() throws Exception {
-    TokenDb tokenDb = new TokenDb(dbFile);
+    TokenDb tokenDb = new TokenDb(dbFile, password);
     assertNull(tokenDb.loadToken("gigi"));
   }  
  

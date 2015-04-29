@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import ro.sync.net.protocol.http.HttpExceptionWithDetails;
@@ -280,31 +281,60 @@ public class GDriveManagerFilter implements Filter {
     logger.debug("Request from user " + userId + " finished.");
 	}
 
-	/**
-	 * @see Filter#init(FilterConfig)
-	 */
-	public void init(FilterConfig fConfig) throws ServletException {
-	  logger.debug("Filter initialized on classloader " + this.getClass().getClassLoader());
-	  
-	  // Set the temporary dir to be used by for storing files to be uploaded.
-	  java.io.File tmpDir = 
-	      (File) fConfig.getServletContext().getAttribute(TEMPDIR_ATTR);
+  public void init(FilterConfig fConfig) throws ServletException {
+    logger.debug("Filter initialized on classloader " + this.getClass().getClassLoader());
+
+    // Set the temporary dir to be used by for storing files to be uploaded.
+    java.io.File tmpDir = (File) fConfig.getServletContext().getAttribute(TEMPDIR_ATTR);
     GDriveUrlConnection.setTempDir(tmpDir);
+    String passwordToEncryptWith = "";
+    try {
+      passwordToEncryptWith = retriveDBPasword(fConfig);
+    } catch (IOException e1) {
+      throw new ServletException("Could not read password", e1);
+    }
     
     File tokenDbFile = new File(tmpDir, "tokens-gdrive.properties");
     try {
-      tokenDb = new TokenDb(tokenDbFile);
+      tokenDb = new TokenDb(tokenDbFile, passwordToEncryptWith);
     } catch (IOException e) {
       throw new ServletException("Could not create token DB.", e);
     }
-    
-    InputStream secretsPath = 
-        fConfig.getServletContext().getResourceAsStream("/WEB-INF/gdrive-secrets.json");
+
+    InputStream secretsPath = fConfig.getServletContext().getResourceAsStream("/WEB-INF/gdrive-secrets.json");
+
     try {
       Credentials.setCredentialsFromStream(secretsPath);
     } catch (IOException e) {
       throw new ServletException("Could not read the client secrets.", e);
     }
-	}
+    
+    // Set the client id here so that it can be used from JSP.
+    String clientId = Credentials.getInstance().getClientId();
+    fConfig.getServletContext().setAttribute("gdrive.client.id", clientId);
+  }
+  
+  /**
+   * Reads the text file for retrieving password.
+   * 
+   * @param fConfig is the filter configuration.
+   * 
+   * @return the password.
+   * 
+   * @throws IOException If the password could not be read. 
+   */
+  private String retriveDBPasword(FilterConfig fConfig) throws IOException {
+    InputStream tokenDbPassword = fConfig.getServletContext().getResourceAsStream("/WEB-INF/gdrive-passwd.txt");
+
+    if(tokenDbPassword == null) {
+      return "";
+    }
+    
+    try {
+      return IOUtils.toString(tokenDbPassword);
+    } finally {
+      IOUtils.closeQuietly(tokenDbPassword);
+    }
+  }
 
 }

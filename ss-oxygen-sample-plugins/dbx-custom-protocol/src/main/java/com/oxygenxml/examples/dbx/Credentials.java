@@ -89,10 +89,17 @@ public class Credentials {
     // Load the secrets from the file.
     Properties secrets = new Properties();
     secrets.load(secretsStream);
-    logger.debug("Loaded secrets from file: " + secrets);
+    logger.debug("Loaded secrets from file.");
     
     APP_KEY = secrets.getProperty("app_key");
     APP_SECRET = secrets.getProperty("app_secret");
     REDIRECT_URI = secrets.getProperty("redirect_uri");
+  }
+  
+  /**
+   * @return the application key
+   */
+  public static String getAppKey() {
+    return APP_KEY;
   }
 }
