@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oxygen.version>17.0-SNAPSHOT</oxygen.version>
+        <oxygen.version>17.1-SNAPSHOT</oxygen.version>
     </properties>
     
 	<modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>com.oxygenxml</groupId>
 		<artifactId>oxygen-superpom</artifactId>
-		<version>17.0-SNAPSHOT</version>
+		<version>17.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.oxygenxml.samples</groupId>
 
