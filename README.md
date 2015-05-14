@@ -37,6 +37,4 @@ Deploying the webapp
 
 You can now copy the **.war** file in the **webapps** folder of your Tomcat instance. The application can now be accessed at [http://localhost:8080/storage-services-oxy-integration/](http://localhost:8080/storage-services-oxy-integration/).
 
-**Note:** The version 16.0.0 of the webapp does not work with Tomcat 8.
-
 **Note:** After any change to the webapp, please stop and start the Tomcat instance again. The oXygen WebApp does not support hot reload.
