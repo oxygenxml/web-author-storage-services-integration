@@ -61,12 +61,12 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
-			<version>v2-rev128-1.18.0-rc</version>
+			<version>v2-rev168-1.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-plus</artifactId>
-			<version>v1-rev128-1.18.0-rc</version>
+			<version>v1-rev219-1.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.http-client</groupId>

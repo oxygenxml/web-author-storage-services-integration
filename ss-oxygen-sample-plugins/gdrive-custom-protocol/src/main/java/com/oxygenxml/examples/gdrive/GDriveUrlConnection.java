@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import ro.sync.net.protocol.http.HttpExceptionWithDetails;
+
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -241,6 +243,9 @@ public class GDriveUrlConnection extends HttpURLConnection {
           });  
         } catch (AuthorizationRequiredException e) {
           logger.warn("Access revoked during editing.", e);
+        } catch (HttpExceptionWithDetails e) {
+          logger.warn(e.getReason(), e);
+          throw e;
         } finally {
           tmpFile.delete();
           logger.debug("deleted tmp file");
