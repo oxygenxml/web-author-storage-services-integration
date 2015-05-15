@@ -245,7 +245,7 @@ public class GDriveUrlConnection extends HttpURLConnection {
           logger.warn("Access revoked during editing.", e);
         } catch (HttpExceptionWithDetails e) {
           logger.warn("Error saving file: " + e.getReason(), e);
-          throw e;
+          throw new IOException(e.getReason(), e);
         } finally {
           tmpFile.delete();
           logger.debug("deleted tmp file");
