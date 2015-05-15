@@ -21,6 +21,8 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files.Update;
 import com.google.api.services.drive.model.File;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 /**
@@ -245,7 +247,16 @@ public class GDriveUrlConnection extends HttpURLConnection {
           logger.warn("Access revoked during editing.", e);
         } catch (HttpExceptionWithDetails e) {
           logger.warn("Error saving file: " + e.getReason(), e);
-          throw e;
+          String reason = e.getReason();
+          try {
+            JsonObject jreason = new JsonParser().parse(reason).getAsJsonObject();
+            reason = jreason.getAsJsonObject("error").get("message").getAsString();
+          } catch (Exception jsonParsingException) {
+            // It seems that the message was not a JSON-formatted one.
+            logger.warn(jsonParsingException, jsonParsingException);
+          }
+          throw new IOException(reason, e);
+
         } finally {
           tmpFile.delete();
           logger.debug("deleted tmp file");
