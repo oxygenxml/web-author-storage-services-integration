@@ -256,7 +256,6 @@ public class GDriveUrlConnection extends HttpURLConnection {
             logger.warn(jsonParsingException, jsonParsingException);
           }
           throw new IOException(reason, e);
-
         } finally {
           tmpFile.delete();
           logger.debug("deleted tmp file");
