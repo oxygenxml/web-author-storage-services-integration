@@ -56,9 +56,16 @@ public class AuthCode extends HttpServlet {
       tokenRequest.setRequestInitializer(new OxygenHttpRequestInitializer());
       GoogleTokenResponse response = tokenRequest.execute();
       logger.debug("token response received.");
-      String userId = GDriveManagerFilter.setCredential(response);
-      logger.debug("Setting drive for user: " + userId);
-      request.getSession().setAttribute(AuthCode.USERID, userId);
+      
+      String userId;
+      try {
+        userId = GDriveManagerFilter.setCredential(response);
+        
+        logger.debug("Setting drive for user: " + userId);
+        request.getSession().setAttribute(AuthCode.USERID, userId);
+      } catch (ArrayIndexOutOfBoundsException ex) {
+        logger.debug("Couldn't process the userId");
+      }
       
       String state = request.getParameter("state");
       String redirectURL = state != null ? state : "index.html";

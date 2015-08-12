@@ -11,7 +11,7 @@
  class="com.oxygenxml.examples.gdrive.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">
  <runtime>
-        <librariesFolder name="lib" scope="global"/>
+    <librariesFolder name="lib" scope="global"/>
  </runtime>
  
  <extension type="URLHandler" 

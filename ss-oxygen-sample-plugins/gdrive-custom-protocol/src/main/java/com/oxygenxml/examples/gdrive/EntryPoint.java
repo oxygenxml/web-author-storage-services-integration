@@ -73,6 +73,48 @@ public class EntryPoint extends HttpServlet {
   private static final Logger logger = 
       Logger.getLogger(EntryPoint.class.getName());
 
+  /**
+   * Returns the google api clientId saved
+   */
+  @Override
+  protected void doPut(HttpServletRequest httpRequest,
+      HttpServletResponse httpResponse) throws ServletException, IOException {
+
+    String client_id = (String) getServletContext().getAttribute("gdrive.client.id");
+    
+    if (client_id != null) {
+      httpResponse.setStatus(HttpServletResponse.SC_OK);
+      httpResponse.getWriter().write(client_id);
+      httpResponse.getWriter().flush();  
+    } else {
+      httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+  }
+  
+  /**
+   * Returns a file path from a user id and file id
+   */
+  @Override
+  protected void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
+      throws ServletException, IOException {
+    String userId = httpRequest.getParameter("userId");
+    String fileId = httpRequest.getParameter("fileId");
+    
+    if (userId != null && fileId != null) {
+      try {
+        String filePath = computeFilePath(fileId, userId);
+        
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        httpResponse.getWriter().write(filePath);
+        httpResponse.getWriter().flush();
+      } catch (AuthorizationRequiredException e) {
+        httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      }
+    } else {
+      httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "The request should contain a userId and fileId");
+    }
+  }
+  
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
