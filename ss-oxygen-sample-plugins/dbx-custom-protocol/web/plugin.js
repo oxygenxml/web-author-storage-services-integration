@@ -147,7 +147,7 @@
     }
 
     // register a create action for the url chooser.
-    var createAction = new sync.actions.CreateAction(urlChooser);
+    var createAction = new sync.api.CreateDocumentAction(urlChooser);
     createAction.setLargeIcon('../plugin-resources/dbx/dropbox-blue.png');
     workspace.getActionsManager().registerCreateAction(
         createAction);
