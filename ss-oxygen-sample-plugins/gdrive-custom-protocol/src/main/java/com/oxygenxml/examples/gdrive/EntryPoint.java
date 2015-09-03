@@ -240,7 +240,7 @@ public class EntryPoint extends HttpServlet {
     logger.debug("Opening url: " + fileUrl);
     String encodedFileUrl = encodeUrlComponent(fileUrl);
     String encodedUserName = encodeUrlComponent(userName);
-    httpResponse.sendRedirect("../app/demo-mobile.html?url=" + encodedFileUrl +
+    httpResponse.sendRedirect("../app/oxygen.html?url=" + encodedFileUrl +
         "&author=" + encodedUserName +
         "&showSave=true");
   }
