@@ -113,7 +113,7 @@
         var request = new goog.net.XhrIo();
         goog.events.listenOnce(request, goog.net.EventType.COMPLETE, goog.bind(function(){
           var responseText = request.getResponse();
-          var encodedContent = sync.util.b64encode(responseText);
+          var encodedContent = sync.util.encodeB64(responseText);
           fileURL = 'data:text/xml;base64,' + encodedContent;
           Dropbox.save(fileURL, fileName, options);
         }, this));
