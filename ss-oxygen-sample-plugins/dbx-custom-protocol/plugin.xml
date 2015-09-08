@@ -17,6 +17,6 @@
  <extension type="URLHandler" 
   class="com.oxygenxml.examples.dbx.CustomProtocolURLHandlerExtension"/>
  <extension type="WebappStaticResourcesFolder" 
-   path="resources/" href="dbx/"/>
+   path="resources/" href="dbx"/>
  
 </plugin>
