@@ -10,11 +10,15 @@
  vendor="SyncRO"
  class="com.oxygenxml.examples.gdrive.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">
+ 
  <runtime>
-    <librariesFolder name="lib" scope="global"/>
+  <librariesFolder name="target/classes"/>  
  </runtime>
  
  <extension type="URLHandler" 
   class="com.oxygenxml.examples.gdrive.CustomProtocolURLHandlerExtension"/>
+  
+ <extension type="WebappStaticResourcesFolder" 
+  path="resources/" href="gdrive"/>
  
 </plugin>
