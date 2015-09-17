@@ -316,6 +316,10 @@ function gDrivecheckAuth() {
     createAction.setDescription('Create a new template in your Google Drive');
     openAction.setDescription('Open a document from your Google Drive');
 
+    // set the actions ids
+    createAction.setActionId('gdrive-create-action');
+    openAction.setActionId('gdrive-open-action');
+
     // override the open file methods to open a file from drive.
     createAction.openFile = openFileDromDrive;
     openAction.openFile = openFileDromDrive;
