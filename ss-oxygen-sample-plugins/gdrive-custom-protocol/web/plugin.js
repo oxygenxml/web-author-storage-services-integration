@@ -299,11 +299,8 @@ function gDrivecheckAuth() {
   var url = sync.util.getURLParameter('url');
 
   if (!url) {
-    /**
-     * Function that opens a file from the user's drive.
-     *
-     * @param fileUrl the file url we computed.
-     */
+
+    /** Function that opens a file from the user's drive. */
     var openFileDromDrive = function(fileUrl) {
       document.location.href = fileUrl;
     };
@@ -314,6 +311,10 @@ function gDrivecheckAuth() {
     // set custom icons for the open/create actions.
     createAction.setLargeIcon('../plugin-resources/gdrive/gdrive.png');
     openAction.setLargeIcon('../plugin-resources/gdrive/gdrive.png');
+
+    // set tooltip messages.
+    createAction.setDescription('Create a new template in your Google Drive');
+    openAction.setDescription('Open a document from your Google Drive');
 
     // override the open file methods to open a file from drive.
     createAction.openFile = openFileDromDrive;
