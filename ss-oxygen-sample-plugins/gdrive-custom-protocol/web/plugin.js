@@ -36,28 +36,72 @@ goog.inherits(GDriveUrlChooser, sync.api.UrlChooser);
  * invoked with.
  */
 GDriveUrlChooser.prototype.chooseUrl = function (context, chosen, purpose) {
+  this.chooseUrlInternal_(context, chosen, purpose);
+};
+
+/**
+ * Chooses the url for internal use.Optains the file url.
+ *
+ * @param context the context in which the chooser is called.
+ * @param chosen the callback method to call when the url has been chosen.
+ * @param purpose the purpose of the choosing.
+ * @private
+ */
+GDriveUrlChooser.prototype.chooseUrlInternal_ = function (context, chosen, purpose) {
   if (this.gDriveToken) {
-    var viewID = google.picker.ViewId.DOCS;
-    if(context.getType() == sync.api.UrlChooser.Type.IMAGE) {
-      viewID = google.picker.ViewId.DOCS_IMAGES;
-    } else if(context.getType() == sync.api.UrlChooser.Type.GENERIC) {
-      viewID = google.picker.ViewId.DOCUMENTS;
-    }
-
-    var view = new google.picker.DocsView(viewID);
-    //view.setIncludeFolders(true);
-    //view.setSelectFolderEnabled(false);
-
-    var picker = new google.picker.PickerBuilder()
-        .addView(view)
-        .setOrigin(window.location.protocol + '//' + window.location.host)
-        .setOAuthToken(this.gDriveToken)
-        .setCallback(goog.bind(this.chooserCallback, this, chosen))
-        .build();
-    picker.setVisible(true);
+    this.choose_(context,
+        goog.bind(this.chooserCallback, this, chosen));
   } else {
-    this.obtainAuthorization(goog.bind(this.chooseUrl, this, context, chosen, purpose));
+    this.obtainAuthorization(goog.bind(this.chooseUrlInternal_, this, context, chosen, purpose));
   }
+};
+
+/**
+ *  Opens the file selected thru browser redirect.
+ *  Calls the callback method with null so that is does not handle the
+ *  obtained url.
+ *
+ * @param context the context in which the chooser is called.
+ * @param chosen the callback method to call when the url has been chosen.
+ * @param purpose the purpose of the choosing.
+ * @private
+ */
+GDriveUrlChooser.prototype.chooseUrlForRedirect = function (context, chosen, purpose) {
+  if (this.gDriveToken) {
+    this.choose_(context,
+        goog.bind(function(callback, data) {
+          if(data.action == 'picked') {
+            var fileId = data.docs[0].id;
+            chosen(null);
+            this.openFileById(fileId);
+          }
+        }, this, chosen));
+  } else {
+    this.obtainAuthorization(goog.bind(this.chooseUrlForRedirect, this, context, chosen, purpose));
+  }
+};
+
+/**
+ * Creates the gdrive picker handling the choose.
+ *
+ * @private
+ */
+GDriveUrlChooser.prototype.choose_ = function (context, callback) {
+  var viewID = google.picker.ViewId.DOCS;
+  if(context.getType() == sync.api.UrlChooser.Type.IMAGE) {
+    viewID = google.picker.ViewId.DOCS_IMAGES;
+  } else if(context.getType() == sync.api.UrlChooser.Type.GENERIC) {
+    viewID = google.picker.ViewId.DOCS;
+  }
+  var view = new google.picker.DocsView(viewID);
+
+  var picker = new google.picker.PickerBuilder()
+      .addView(view)
+      .setOrigin(window.location.protocol + '//' + window.location.host)
+      .setOAuthToken(this.gDriveToken)
+      .setCallback(callback)
+      .build();
+  picker.setVisible(true);
 };
 
 /**
@@ -119,14 +163,24 @@ GDriveUrlChooser.prototype.obtainUserId = function() {
 /**
  * Handles the drive picker's returned information.
  *
- * @param callback method to call with propper information.
+ * @param callback method to call with propper URL.
  * @param data data received from the picker.
  */
 GDriveUrlChooser.prototype.chooserCallback = function (callback, data) {
   if(data.action == 'picked') {
     var fileId = data.docs[0].id;
-    var fileUrl = this.computeFileUrl(fileId);
-    callback(fileUrl);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = goog.bind(function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var chosenUrl = xhr.responseText;
+        chosenUrl = 'gdrive:///' + this.userId + chosenUrl;
+        callback(chosenUrl);
+      }
+    }, this);
+
+    xhr.open('POST', '../gdrive/start', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('userId=' + this.userId + '&' + 'fileId=' + fileId);
   }
 };
 
@@ -225,8 +279,11 @@ GDriveUrlChooser.prototype.saveToDrive = function (fileURL, fileName, parentId, 
     request.execute(goog.bind(function (file) {
       var fileId = file.id;
 
-      var fileUrl = this.computeFileUrl(fileId);
-      callback(fileUrl, sync.api.UrlChooser.SaveResult.SAVED_AVAILABLE_URL);
+      // notify the CreateDocumentAction not to open the file.
+      callback(null);
+
+      // we open the new document directly.
+      this.openFileById(fileId);
     }, this));
   }, this));
   // get the content of the file.
@@ -234,13 +291,11 @@ GDriveUrlChooser.prototype.saveToDrive = function (fileURL, fileName, parentId, 
 };
 
 /**
- * Computes the url at which the file can be opened from the file id.
+ * Opens the file with the given id.
  *
- * @param fileId the file id.
- *
- * @return {string} the file's url.
+ * @param fileId the id of the file to open.
  */
-GDriveUrlChooser.prototype.computeFileUrl = function(fileId) {
+GDriveUrlChooser.prototype.openFileById = function(fileId) {
   var state = JSON.stringify({
     ids : [fileId],
     action: "open",
@@ -248,8 +303,7 @@ GDriveUrlChooser.prototype.computeFileUrl = function(fileId) {
   });
   var gDriveEntryPoint = '../gdrive/start';
   var fileUrl = gDriveEntryPoint + '?state=' + encodeURIComponent(state);
-
-  return fileUrl;
+  window.open(fileUrl);
 };
 
 /**
@@ -300,11 +354,6 @@ function gDrivecheckAuth() {
 
   if (!url) {
 
-    /** Function that opens a file from the user's drive. */
-    var openFileDromDrive = function(fileUrl) {
-      document.location.href = fileUrl;
-    };
-
     var createAction = new sync.api.CreateDocumentAction(gDriveUrlChooser);
     var openAction = new sync.actions.OpenAction(gDriveUrlChooser);
 
@@ -320,9 +369,12 @@ function gDrivecheckAuth() {
     createAction.setActionId('gdrive-create-action');
     openAction.setActionId('gdrive-open-action');
 
-    // override the open file methods to open a file from drive.
-    createAction.openFile = openFileDromDrive;
-    openAction.openFile = openFileDromDrive;
+    // override the perform action method to open a file from drive.
+    openAction.actionPerformed = goog.bind(function() {
+      this.urlChooser.chooseUrlForRedirect(new sync.api.UrlChooser.Context(sync.api.UrlChooser.Type.GENERIC),
+          this.openFile,
+          sync.api.UrlChooser.Purpose);
+    }, openAction);
 
     // register open and create actions to the workspace actions manager.
     var actionsManager = workspace.getActionsManager();
