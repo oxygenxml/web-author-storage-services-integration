@@ -12,7 +12,7 @@
  classLoaderType="preferOxygenResources">
  
  <runtime>
-  <librariesFolder name="target/classes"/>  
+  <librariesFolder name="lib" scope="global"/>  
  </runtime>
  
  <extension type="URLHandler" 
