@@ -1,4 +1,7 @@
 (function() {
+  // The app key.
+  var DATA_APP_KEY = '[YOUR-DATA_APP_KEY]';
+
   var getUrlParameter = function(name) {
     return (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) ||
     [, null])[1];
@@ -17,7 +20,7 @@
   } else if(url.indexOf("dbx:/") == 0) {
     protoPrefix= "dbx:/";
     useDbxProtocol = true;
-  } 
+  }
   if (url == 'null'  || useDbxProtocol) {
     if(useDbxProtocol) {
       var partialPath = url.substring(protoPrefix.length);
@@ -27,24 +30,23 @@
     var dbxScript = document.createElement('script');
     dbxScript.setAttribute("src", "https://www.dropbox.com/static/api/2/dropins.js");
     dbxScript.setAttribute("id", "dropboxjs");
-    dbxScript.setAttribute("data-app-key", "nj59lfu1m0hx915");
+    dbxScript.setAttribute("data-app-key", DATA_APP_KEY);
     document.head.appendChild(dbxScript);
 
 
-    goog.provide('sync.api.DropboxUrlChooser');
+    goog.provide('DropboxUrlChooser');
 
     goog.require('sync.api.UrlChooser');
-
 
     /**
      * A implementation class for URL choosers.
      *
      * @constructor
      */
-    sync.api.DropboxUrlChooser = function() {
+    DropboxUrlChooser = function() {
       sync.api.UrlChooser.call(this);
     };
-    goog.inherits(sync.api.DropboxUrlChooser, sync.api.UrlChooser);
+    goog.inherits(DropboxUrlChooser, sync.api.UrlChooser);
 
     /**
      * Invokes the URL chooser.
@@ -61,7 +63,15 @@
      * @param {sync.api.UrlChooser.Purpose} purpose The purpose the chooser is
      * invoked with.
      */
-    sync.api.DropboxUrlChooser.prototype.chooseUrl = function(context, chosen, purpose) {
+    DropboxUrlChooser.prototype.chooseUrl = function(context, chosen, purpose) {
+      var supportedExtensions = null;
+      // set the correct extensions depending on the context type.
+      if(context.getType() == sync.api.UrlChooser.Type.IMAGE) {
+        supportedExtensions = ['.bmp', '.cr2', '.gif', '.ico', '.ithmb', '.jpeg', '.jpg', '.nef', '.png', '.raw', '.svg', '.tif', '.tiff', '.wbmp', '.webp'];
+      } else if(context.getType() == sync.api.UrlChooser.Type.GENERIC) {
+        supportedExtensions = ['.xml', '.dita', '.ditamap', '.ditaval', '.mathml'];
+      }
+
       var options = {
         // Required. Called when a user selects an item in the Chooser.
         success: function (files) {
@@ -71,14 +81,23 @@
           var codeAndPath = link.substring(prefix.length);
           var path = codeAndPath.substring(codeAndPath.indexOf('/'));
 
-          var imageURL = 'dbx:///' + userID + path;
-          chosen(imageURL);
+          if(userID) {
+            var imageURL = 'dbx:///' + userID + path;
+            chosen(imageURL);
+          } else {
+            // if we do not have the user id we open the file ourselves and request authorization.
+            chosen(null);
+            // open the chosen file in a new tab.
+            var href = "../dbx/start?path=" + encodeURIComponent(path);
+            window.open(href);
+          }
         },
 
         linkType: "direct",
         multiselect: false,
-        extensions: ['.bmp', '.cr2', '.gif', '.ico', '.ithmb', '.jpeg', '.jpg', '.nef', '.png', '.raw', '.svg', '.tif', '.tiff', '.wbmp', '.webp']
+        extensions: supportedExtensions
       };
+      
       Dropbox.choose(options);
     };
 
@@ -90,21 +109,13 @@
      * @param callback the callback function to call with the new file path as parameter.
      * @param {boolean}opt_externalAccess {true} if the fileURL can be accessed by the dropbox servers.
      */
-    sync.api.DropboxUrlChooser.prototype.saveFile = function (fileURL, fileName, callback, opt_externalAccess) {
+    DropboxUrlChooser.prototype.saveFile = function (fileURL, fileName, callback, opt_externalAccess) {
       var options = {
         success: function (e) {
           callback(null);
         },
-        // The value passed to this callback is a float
-        // between 0 and 1.
-        progress: function (progress) {
-        },
-        // Cancel is called if the user presses the Cancel button or closes the Saver.
-        cancel: function () {
-        },
         // Error is called in the event of an unexpected response from the server
         error: function (errorMessage) {
-          // TODO: handle the case in which an error occurs
           console.log('An error occurred :' + errorMessage);
         }
       };
@@ -132,7 +143,7 @@
      *
      * @return {boolean} true if the chooser supports the given type.
      */
-    sync.api.DropboxUrlChooser.prototype.supports = function(type) {
+    DropboxUrlChooser.prototype.supports = function(type) {
       var supports = false;
       if(type == sync.api.UrlChooser.Type.IMAGE) {
         supports = true;
@@ -140,7 +151,7 @@
       return supports;
     };
 
-    var urlChooser = new sync.api.DropboxUrlChooser();
+    var urlChooser = new DropboxUrlChooser();
     // if the current opened file is from dropbox use the Dropbox url chooser.
     if(useDbxProtocol) {
       workspace.setUrlChooser(urlChooser);
@@ -148,12 +159,25 @@
 
     // register a create action for the url chooser.
     var createAction = new sync.api.CreateDocumentAction(urlChooser);
+    var openAction = new sync.actions.OpenAction(urlChooser);
 
+    // set the the actions descriptions.
+    createAction.setDescription('Save a template document in your Dropbox');
+    openAction.setDescription('Open a document from your Dropbox');
+
+    // set custom icons for the open and create action.
     createAction.setLargeIcon('../plugin-resources/dbx/dropbox-blue.png');
+    openAction.setLargeIcon('../plugin-resources/dbx/dropbox-blue.png');
+
+    // set the actions ids
     createAction.setActionId('dbx-create-action');
+    openAction.setActionId('dbx-open-action');
 
     workspace.getActionsManager().registerCreateAction(
         createAction);
+
+    workspace.getActionsManager().registerOpenAction(
+        openAction);
   };
 
 })();
