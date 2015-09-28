@@ -1,6 +1,6 @@
 (function() {
   // The app key.
-  var DATA_APP_KEY = '[YOUR-DATA_APP_KEY]';
+  var DATA_APP_KEY = "[YOUR_DATA_APP_KEY";
 
   var getUrlParameter = function(name) {
     return (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) ||
