@@ -2,12 +2,7 @@
   // The app key.
   var DATA_APP_KEY = "[YOUR_DATA_APP_KEY";
 
-  var getUrlParameter = function(name) {
-    return (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) ||
-    [, null])[1];
-  };
-
-  var url = decodeURIComponent(getUrlParameter("url"));
+  var url = decodeURIComponent(sync.util.getURLParameter("url"));
 
   var protoPrefix = null;
   var useDbxProtocol = false;
