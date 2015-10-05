@@ -369,6 +369,10 @@ function gDrivecheckAuth() {
     createAction.setActionId('gdrive-create-action');
     openAction.setActionId('gdrive-open-action');
 
+    // set the action names.
+    createAction.setActionName('Google Drive');
+    openAction.setActionName('Google Drive');
+    
     // override the perform action method to open a file from drive.
     openAction.actionPerformed = goog.bind(function() {
       this.urlChooser.chooseUrlForRedirect(new sync.api.UrlChooser.Context(sync.api.UrlChooser.Type.GENERIC),

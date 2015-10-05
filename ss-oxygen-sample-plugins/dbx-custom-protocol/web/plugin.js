@@ -167,6 +167,10 @@
     // set the actions ids
     createAction.setActionId('dbx-create-action');
     openAction.setActionId('dbx-open-action');
+    
+    // set the action names.
+    createAction.setActionName('Dropbox');
+    openAction.setActionName('Dropbox');
 
     workspace.getActionsManager().registerCreateAction(
         createAction);
