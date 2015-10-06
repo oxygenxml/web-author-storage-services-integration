@@ -45,8 +45,9 @@ public class EntryPoint extends HttpServlet {
       logger.debug("User requested path: " + path);
       String dbxUrl = "dbx:///" + userId + URLDecoder.decode(path, "UTF-8");
       logger.debug("dbx url: " + path);
+      String encodedUserName = encodeUrl(userData.getUserName());
       httpResponse.sendRedirect("../app/demo-mobile.html?url=" + encodeUrl(dbxUrl) + 
-          "&author=" + userData.getUserName() +
+          "&author=" + encodedUserName +
           "&showSave=true");
     } else if (path != null) {
       // User authorization required.
