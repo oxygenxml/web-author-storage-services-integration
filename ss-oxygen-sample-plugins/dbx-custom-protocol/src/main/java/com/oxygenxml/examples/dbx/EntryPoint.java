@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxWebAuth;
 
+import ro.sync.util.URLUtil;
+
 /**
  * Entry point for our app from the Google Drive UI.
  * 
@@ -46,8 +48,7 @@ public class EntryPoint extends HttpServlet {
       String dbxUrl = "dbx:///" + userId + URLDecoder.decode(path, "UTF-8");
       logger.debug("dbx url: " + path);
       httpResponse.sendRedirect("../app/oxygen.html?url=" + encodeUrl(dbxUrl) + 
-          "&author=" + userData.getUserName() +
-          "&showSave=true");
+          "&author=" + URLUtil.encodeURIComponent(userData.getUserName()));
     } else if (path != null) {
       // User authorization required.
       logger.debug("Starting authorizattion");
