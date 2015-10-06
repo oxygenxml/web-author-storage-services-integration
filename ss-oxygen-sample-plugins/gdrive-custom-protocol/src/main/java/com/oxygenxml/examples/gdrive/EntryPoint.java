@@ -92,7 +92,9 @@ public class EntryPoint extends HttpServlet {
   }
   
   /**
-   * Returns a file path from a user id and file id
+   * Returns a file path from a user id and file id.
+   * 
+   * This method assumes that the user is already tracked by our application, so we can find its credentials.
    */
   @Override
   protected void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
