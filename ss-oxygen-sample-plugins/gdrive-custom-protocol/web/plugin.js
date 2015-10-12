@@ -358,8 +358,9 @@ function gDrivecheckAuth() {
     var openAction = new sync.actions.OpenAction(gDriveUrlChooser);
 
     // set custom icons for the open/create actions.
-    createAction.setLargeIcon('../plugin-resources/gdrive/Drive70.png');
-    openAction.setLargeIcon('../plugin-resources/gdrive/Drive70.png');
+    var iconUrl = '../plugin-resources/gdrive/Drive70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
+    createAction.setLargeIcon(iconUrl);
+    openAction.setLargeIcon(iconUrl);
 
     // set tooltip messages.
     createAction.setDescription('Create a new template in your Google Drive');
@@ -372,7 +373,7 @@ function gDrivecheckAuth() {
     // set the action names.
     createAction.setActionName('Google Drive');
     openAction.setActionName('Google Drive');
-    
+
     // override the perform action method to open a file from drive.
     openAction.actionPerformed = goog.bind(function() {
       this.urlChooser.chooseUrlForRedirect(new sync.api.UrlChooser.Context(sync.api.UrlChooser.Type.GENERIC),
