@@ -161,8 +161,9 @@
     openAction.setDescription('Open a document from your Dropbox');
 
     // set custom icons for the open and create action.
-    createAction.setLargeIcon('../plugin-resources/dbx/Dropbox70.png');
-    openAction.setLargeIcon('../plugin-resources/dbx/Dropbox70.png');
+    var largeIcon = '../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
+    createAction.setLargeIcon(largeIcon);
+    openAction.setLargeIcon('../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png');
 
     // set the actions ids
     createAction.setActionId('dbx-create-action');
