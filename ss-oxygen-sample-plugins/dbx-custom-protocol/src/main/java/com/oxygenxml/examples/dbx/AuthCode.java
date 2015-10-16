@@ -1,6 +1,7 @@
 package com.oxygenxml.examples.dbx;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -54,7 +55,12 @@ public class AuthCode extends HttpServlet {
     try {
         @SuppressWarnings("unchecked")
         Map<String, String[]> parameterMap = request.getParameterMap();
-        logger.debug("Callback from Dropbox.. " + request.getParameterMap());
+        if (logger.isDebugEnabled()) {
+        	logger.debug("Callback from Dropbox.. :");
+        	for (Map.Entry<String, String[]> param: parameterMap.entrySet()) {
+        		logger.debug(param.getKey() + " = " + Arrays.toString(param.getValue()));
+        	}
+        }
         authFinish = auth.finish(parameterMap);
     }
     catch (DbxWebAuth.BadRequestException ex) {
