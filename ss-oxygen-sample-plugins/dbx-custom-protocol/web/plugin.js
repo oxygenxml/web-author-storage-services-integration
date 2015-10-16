@@ -1,6 +1,6 @@
 (function() {
   // The app key.
-  var DATA_APP_KEY = "[YOUR_DATA_APP_KEY";
+  var DATA_APP_KEY = "nj59lfu1m0hx915";
 
   var url = decodeURIComponent(sync.util.getURLParameter("url"));
 
