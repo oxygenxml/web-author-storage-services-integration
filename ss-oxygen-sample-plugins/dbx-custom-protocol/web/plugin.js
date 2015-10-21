@@ -116,14 +116,17 @@
       };
       // dropbox server cannot access this url so we convert it to a data: url.
       if (!opt_externalAccess) {
-        var request = new goog.net.XhrIo();
-        goog.events.listenOnce(request, goog.net.EventType.COMPLETE, goog.bind(function(){
-          var responseText = request.getResponse();
-          var encodedContent = sync.util.encodeB64(responseText);
-          fileURL = 'data:text/xml;base64,' + encodedContent;
-          Dropbox.save(fileURL, fileName, options);
-        }, this));
-        request.send(fileURL, 'GET');
+        $.ajax({
+          url: fileURL,
+          type: 'GET',
+          async: false,
+          success: goog.bind(function(result){
+            var responseText = result;
+            var encodedContent = sync.util.encodeB64(responseText);
+            fileURL = 'data:text/xml;base64,' + encodedContent;
+            Dropbox.save(fileURL, fileName, options);
+          }, this)
+        });
       } else {
         Dropbox.save(fileURL, fileName, options);
       }
