@@ -295,7 +295,7 @@ var loadGDriveAuthApi = null;
     });
     var gDriveEntryPoint = '../gdrive/start';
     var fileUrl = gDriveEntryPoint + '?state=' + encodeURIComponent(state);
-    window.open(fileUrl);
+    window.location.href = fileUrl;
   };
 
   /**
