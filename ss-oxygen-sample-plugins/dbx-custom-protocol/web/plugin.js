@@ -84,7 +84,9 @@
             chosen(null);
             // open the chosen file in a new tab.
             var href = "../dbx/start?path=" + encodeURIComponent(path);
-            window.open(href);
+            // we open the dropbox file in the same tab in order to prevent it to be
+            // considered a pop-up and blocked.
+            window.location.href = href;
           }
         },
 
