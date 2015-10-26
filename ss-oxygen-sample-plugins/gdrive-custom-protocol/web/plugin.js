@@ -354,56 +354,54 @@ var loadGDriveAuthApi = null;
     }
   };
 
-  /**
-   * The google drive url chooser.
-   */
-  var gDriveUrlChooser = new GDriveUrlChooser();
-  loadGDriveAuthApi = goog.bind(gDriveUrlChooser.loadGDriveAuthApi, gDriveUrlChooser);
-  /**
-   * Load the google client library.
-   *
-   * Represents the entry point in the integration.
-   */
-  sync.util.loadJsFile("https://apis.google.com/js/client.js?onload=loadGDriveAuthApi");
-
   var url = sync.util.getURLParameter('url');
+  if(!url || (url && url.indexOf('gdrive') == 0)) {
+    // The google drive url chooser.
+    var gDriveUrlChooser = new GDriveUrlChooser();
+    loadGDriveAuthApi = goog.bind(gDriveUrlChooser.loadGDriveAuthApi, gDriveUrlChooser);
 
-  if (!url) {
+    /**
+     * Load the google client library.
+     *
+     * Represents the entry point in the integration.
+     */
+    sync.util.loadJsFile("https://apis.google.com/js/client.js?onload=loadGDriveAuthApi");
 
-    var createAction = new sync.api.CreateDocumentAction(gDriveUrlChooser);
-    var openAction = new sync.actions.OpenAction(gDriveUrlChooser);
+    if (!url) {
+      var createAction = new sync.api.CreateDocumentAction(gDriveUrlChooser);
+      var openAction = new sync.actions.OpenAction(gDriveUrlChooser);
 
-    // set custom icons for the open/create actions.
-    var iconUrl = '../plugin-resources/gdrive/Drive70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
-    createAction.setLargeIcon(iconUrl);
-    openAction.setLargeIcon(iconUrl);
+      // set custom icons for the open/create actions.
+      var iconUrl = '../plugin-resources/gdrive/Drive70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
+      createAction.setLargeIcon(iconUrl);
+      openAction.setLargeIcon(iconUrl);
 
-    // set tooltip messages.
-    createAction.setDescription('Create a new template in your Google Drive');
-    openAction.setDescription('Open a document from your Google Drive');
+      // set tooltip messages.
+      createAction.setDescription('Create a new template in your Google Drive');
+      openAction.setDescription('Open a document from your Google Drive');
 
-    // set the actions ids
-    createAction.setActionId('gdrive-create-action');
-    openAction.setActionId('gdrive-open-action');
+      // set the actions ids
+      createAction.setActionId('gdrive-create-action');
+      openAction.setActionId('gdrive-open-action');
 
-    // set the action names.
-    createAction.setActionName('Google Drive');
-    openAction.setActionName('Google Drive');
+      // set the action names.
+      createAction.setActionName('Google Drive');
+      openAction.setActionName('Google Drive');
 
-    // override the perform action method to open a file from drive.
-    openAction.actionPerformed = goog.bind(function() {
-      this.urlChooser.chooseUrlForRedirect(new sync.api.UrlChooser.Context(sync.api.UrlChooser.Type.GENERIC),
-          this.openFile,
-          sync.api.UrlChooser.Purpose);
-    }, openAction);
+      // override the perform action method to open a file from drive.
+      openAction.actionPerformed = goog.bind(function () {
+        this.urlChooser.chooseUrlForRedirect(new sync.api.UrlChooser.Context(sync.api.UrlChooser.Type.GENERIC),
+            this.openFile,
+            sync.api.UrlChooser.Purpose);
+      }, openAction);
 
-    // register open and create actions to the workspace actions manager.
-    var actionsManager = workspace.getActionsManager();
-    actionsManager.registerCreateAction(createAction);
-    actionsManager.registerOpenAction(openAction);
+      // register open and create actions to the workspace actions manager.
+      var actionsManager = workspace.getActionsManager();
+      actionsManager.registerCreateAction(createAction);
+      actionsManager.registerOpenAction(openAction);
 
-  } else if (url.indexOf('gdrive') == 0 ) {
-    workspace.setUrlChooser(gDriveUrlChooser);
+    } else if (url.indexOf('gdrive') == 0) {
+      workspace.setUrlChooser(gDriveUrlChooser);
+    }
   }
-
 })();
