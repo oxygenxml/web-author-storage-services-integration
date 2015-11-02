@@ -23,6 +23,4 @@ file. Here we bind the oXygen Author servlets and filters as well as
 the plugins servlets and filters.
 
 Another important file that needs to be placed in the [src/main/webapp/WEB-INF/](src/main/webapp/WEB-INF) folder
-is the **license.txt** file. This file entitles you to use the
-oXygen Author WebApp. In order to obtain such a license, contact us
-on <support@oxygenxml.com>.
+is the **license.properties** file. This file contains connection details for an oXygen licensing server that is configured with an oXygen XML WebApp license.
