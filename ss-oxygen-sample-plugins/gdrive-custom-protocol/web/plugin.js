@@ -233,9 +233,9 @@ var loadGDriveAuthApi = null;
    * @param callback method to call with the save result as parameter.
    */
   GDriveUrlChooser.prototype.saveToDrive = function (fileURL, fileName, parentId, callback) {
-    const boundary = '-------314159265358979323846';
-    const delimiter = "\r\n--" + boundary + "\r\n";
-    const close_delim = "\r\n--" + boundary + "--";
+    var boundary = '-------314159265358979323846';
+    var delimiter = "\r\n--" + boundary + "\r\n";
+    var close_delim = "\r\n--" + boundary + "--";
     var contentType = 'text/xml';
     var metadata = {
       'title': fileName,
