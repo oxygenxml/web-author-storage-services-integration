@@ -6,7 +6,7 @@
  id="com.oxygenxml.examples.dbx.CustomProtocol"
  name="DbxCustomProtocol"
  description="An example of a custom protocol implementation that connects to the user's Dropbox."
- version="${project.version}"
+ version="${project.nosnapshot.version}"
  vendor="SyncRO"
  class="com.oxygenxml.examples.dbx.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">

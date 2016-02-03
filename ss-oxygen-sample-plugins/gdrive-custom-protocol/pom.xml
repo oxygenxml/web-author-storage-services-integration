@@ -9,7 +9,29 @@
 	</parent>
 	<artifactId>gdrive-custom-protocol</artifactId>
 	<build>
-		<plugins>
+		<finalName>${project.artifactId}-${project.nosnapshot.version}</finalName>
+    <plugins>
+      <!-- remove the -SNAPSHOT from packaged plugin -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.10</version>
+        <executions>
+          <execution>
+            <id>set-version-no-snapshot</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>project.nosnapshot.version</name>
+              <value>${project.version}</value>
+              <regex>-SNAPSHOT</regex>
+              <replacement></replacement>
+              <failIfNoMatch>false</failIfNoMatch>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>     
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>

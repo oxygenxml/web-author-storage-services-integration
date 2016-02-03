@@ -6,7 +6,7 @@
  id="com.oxygenxml.examples.gdrive.CustomProtocol"
  name="GDriveCustomProtocol"
  description="An example of a custom protocol implementation that connects to the user's Google Drive."
- version="${project.version}"
+ version="${project.nosnapshot.version}"
  vendor="SyncRO"
  class="com.oxygenxml.examples.gdrive.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">
