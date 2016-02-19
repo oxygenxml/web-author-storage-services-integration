@@ -272,7 +272,7 @@ var loadGDriveAuthApi = null;
         var fileId = file.id;
 
         // notify the CreateDocumentAction not to open the file.
-        callback(null);
+        callback(null, sync.api.UrlChooser.SaveResult.SAVED_UNAVAILABLE_URL);
 
         // we open the new document directly.
         this.openFileById(fileId);

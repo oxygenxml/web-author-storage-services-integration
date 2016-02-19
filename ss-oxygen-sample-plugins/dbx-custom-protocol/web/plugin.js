@@ -109,7 +109,7 @@
     DropboxUrlChooser.prototype.saveFile = function (fileURL, fileName, callback, opt_externalAccess) {
       var options = {
         success: function (e) {
-          callback(null);
+          callback(null, sync.api.UrlChooser.SaveResult.SAVED_UNAVAILABLE_URL);
         },
         // Error is called in the event of an unexpected response from the server
         error: function (errorMessage) {
