@@ -12,10 +12,6 @@
 
 	<files>
 		<file>
-			<source>target/${project.build.finalName}.jar</source>
-			<outputDirectory>/lib</outputDirectory>
-		</file>
-		<file>
 			<source>plugin.xml</source>
 			<outputDirectory>/</outputDirectory>
 			<filtered>true</filtered>
