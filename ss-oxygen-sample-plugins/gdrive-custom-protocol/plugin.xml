@@ -12,7 +12,10 @@
  classLoaderType="preferOxygenResources">
  
  <runtime>
-  <librariesFolder name="lib" scope="global"/>  
+  <librariesFolder name="lib"/>
+  
+  <library name="target/classes"/>
+  <librariesFolder name="target/lib" />
  </runtime>
  
  <extension type="URLHandler" 
@@ -21,4 +24,9 @@
  <extension type="WebappStaticResourcesFolder" 
   path="resources/" href="gdrive"/>
  
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.gdrive.EntryPoint"/>
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.gdrive.AuthCode"/>
+  
 </plugin>

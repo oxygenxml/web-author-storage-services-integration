@@ -113,7 +113,7 @@ var loadGDriveAuthApi = null;
       this.appClientId = requestContent.getResponse();
       this.gDrivecheckAuth();
     }, this));
-    requestContent.send('../gdrive/start', 'PUT');
+    requestContent.send('../plugins-dispatcher/gdrive-start', 'PUT');
   };
 
   /**
@@ -170,7 +170,7 @@ var loadGDriveAuthApi = null;
         }
       }, this);
 
-      xhr.open('POST', '../gdrive/start', true);
+      xhr.open('POST', '../plugins-dispatcher/gdrive-start', true);
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.send('userId=' + this.userId + '&' + 'fileId=' + fileId);
     }
@@ -293,7 +293,7 @@ var loadGDriveAuthApi = null;
       action: "open",
       userId: this.userId
     });
-    var gDriveEntryPoint = '../gdrive/start';
+    var gDriveEntryPoint = '../plugins-dispatcher/gdrive-start';
     var fileUrl = gDriveEntryPoint + '?state=' + encodeURIComponent(state);
     window.location.href = fileUrl;
   };

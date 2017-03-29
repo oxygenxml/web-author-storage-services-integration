@@ -12,11 +12,13 @@ import org.apache.log4j.Logger;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+
+import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 /**
  * Servlet that is called back by the google servers after the user authorized
  * our app to access its Drive.
  */
-public class AuthCode extends HttpServlet {
+public class AuthCode extends WebappServletPluginExtension {
 
   /**
    * Logger for logging.
@@ -30,11 +32,6 @@ public class AuthCode extends HttpServlet {
   public static final String USERID = "userid";
   
   /**
-   * Serial version.
-   */
-  private static final long serialVersionUID = 1L;
-
-  /**
    * @see HttpServlet#HttpServlet()
    */
   public AuthCode() {
@@ -46,7 +43,7 @@ public class AuthCode extends HttpServlet {
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
    *      response)
    */
-  protected void doGet(HttpServletRequest request, HttpServletResponse response1) throws ServletException, IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response1) throws ServletException, IOException {
     String code = request.getParameter("code");
     logger.debug("oauth callback with code: " + code);
     if (code != null) {
@@ -68,14 +65,14 @@ public class AuthCode extends HttpServlet {
       }
       
       String state = request.getParameter("state");
-      String redirectURL = state != null ? state : "index.html";
+      String redirectURL = state != null ? state : "../app/oxygen.html";
       logger.debug("Redirecting to " + redirectURL);
       response1.sendRedirect(redirectURL);
     } else {
       logger.debug("Error while authorizing user");
       response1.sendError(HttpServletResponse.SC_UNAUTHORIZED, 
           "In order to edit your XML files in Google Drive, you need to authorize "
-          + "oXygen XML WebApp first.");
+          + "oXygen XML Web Author first.");
     }
   }
   
@@ -90,5 +87,10 @@ public class AuthCode extends HttpServlet {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String userId = (String) httpRequest.getSession().getAttribute(AuthCode.USERID);
     return userId;
+  }
+
+  @Override
+  public String getPath() {
+    return "gdrive-oauth-callback";
   }
 }

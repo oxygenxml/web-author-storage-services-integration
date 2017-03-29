@@ -30,13 +30,15 @@ import com.google.api.services.drive.model.ParentReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
+
 
 /**
  * Entry point for our app from the Google Drive UI. 
  * 
  * This class handles the "Open" and "New" requests from Google Drive.
  */
-public class EntryPoint extends HttpServlet {
+public class EntryPoint extends WebappServletPluginExtension {
   /**
    * The token marking a path as referring to a shared file.
    */
@@ -63,11 +65,6 @@ public class EntryPoint extends HttpServlet {
   private static final String CREATE_ACTION = "create";
 
   /**
-   * Serial version id.
-   */
-	private static final long serialVersionUID = 1L;
-	
-  /**
    * Logger for logging.
    */
   private static final Logger logger = 
@@ -77,10 +74,10 @@ public class EntryPoint extends HttpServlet {
    * Returns the google api clientId saved
    */
   @Override
-  protected void doPut(HttpServletRequest httpRequest,
+  public void doPut(HttpServletRequest httpRequest,
       HttpServletResponse httpResponse) throws ServletException, IOException {
 
-    String client_id = (String) getServletContext().getAttribute("gdrive.client.id");
+    String client_id = (String) getServletConfig().getServletContext().getAttribute("gdrive.client.id");
     
     if (client_id != null) {
       httpResponse.setStatus(HttpServletResponse.SC_OK);
@@ -97,7 +94,7 @@ public class EntryPoint extends HttpServlet {
    * This method assumes that the user is already tracked by our application, so we can find its credentials.
    */
   @Override
-  protected void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
+  public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
       throws ServletException, IOException {
     String userId = httpRequest.getParameter("userId");
     String fileId = httpRequest.getParameter("fileId");
@@ -120,7 +117,7 @@ public class EntryPoint extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+	public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
 	  String stateJson = httpRequest.getParameter("state");
     logger.debug("Request with state: " + stateJson);
     
@@ -144,7 +141,7 @@ public class EntryPoint extends HttpServlet {
       } else {
         // User landed on this page and our app is authorized, teach the user
         // how to use the Google drive app. 
-        redirectUri = "gdrive.html";
+        redirectUri = "../gdrive/gdrive.html";
       }
       sendAuthorizationRequest(httpResponse, redirectUri);
     } else {
@@ -243,8 +240,7 @@ public class EntryPoint extends HttpServlet {
     String encodedFileUrl = encodeUrlComponent(fileUrl);
     String encodedUserName = encodeUrlComponent(userName);
     httpResponse.sendRedirect("../app/oxygen.html?url=" + encodedFileUrl +
-        "&author=" + encodedUserName +
-        "&showSave=true");
+        "&author=" + encodedUserName);
   }
 
   /**
@@ -408,5 +404,10 @@ public class EntryPoint extends HttpServlet {
 	 */
   private String randomId() {
     return new BigInteger(30, new Random(System.currentTimeMillis())).toString(32);
+  }
+
+  @Override
+  public String getPath() {
+    return "gdrive-start";
   }
 }
