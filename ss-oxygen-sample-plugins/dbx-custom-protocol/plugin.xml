@@ -11,12 +11,21 @@
  class="com.oxygenxml.examples.dbx.CustomProtocolPlugin"
  classLoaderType="preferOxygenResources">
  <runtime>
-  <librariesFolder name="lib" scope="global"/>
+  <librariesFolder name="lib"/>
+  
+  <library name="target/classes"/>
+  <librariesFolder name="target/lib" />
  </runtime>
  
  <extension type="URLHandler" 
   class="com.oxygenxml.examples.dbx.CustomProtocolURLHandlerExtension"/>
+  
  <extension type="WebappStaticResourcesFolder" 
    path="resources/" href="dbx"/>
+ 
+  <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.dbx.EntryPoint"/>
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.dbx.AuthCode"/>
  
 </plugin>

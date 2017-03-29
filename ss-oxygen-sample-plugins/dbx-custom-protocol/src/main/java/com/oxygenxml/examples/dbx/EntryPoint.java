@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxWebAuth;
 
+import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 import ro.sync.util.URLUtil;
 
 /**
@@ -21,12 +22,7 @@ import ro.sync.util.URLUtil;
  * 
  * This class handles the "Open" and "New" requests from Google Drive.
  */
-public class EntryPoint extends HttpServlet {
-  /**
-   * Serial version id.
-   */
-  private static final long serialVersionUID = 1L;
-
+public class EntryPoint extends WebappServletPluginExtension {
   /**
    * Logger for logging.
    */
@@ -36,7 +32,7 @@ public class EntryPoint extends HttpServlet {
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
    *      response)
    */
-  protected void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+  public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
     String userId = AuthCode.getUserId(httpRequest);
     logger.debug("User id: " + userId);
     UserData userData = DbxManagerFilter.getCurrentUserData(userId);
@@ -78,5 +74,10 @@ public class EntryPoint extends HttpServlet {
    */
   private String encodeUrl(String dbxUrl) throws UnsupportedEncodingException {
     return URLEncoder.encode(dbxUrl, "UTF-8").replace("+", "%20");
+  }
+
+  @Override
+  public String getPath() {
+    return "dbx-start";
   }
 }

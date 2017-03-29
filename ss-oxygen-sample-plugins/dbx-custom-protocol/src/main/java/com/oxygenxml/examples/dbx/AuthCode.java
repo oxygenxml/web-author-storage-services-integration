@@ -15,11 +15,13 @@ import org.apache.log4j.Logger;
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxWebAuth;
+
+import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 /**
  * Servlet that is called back by the google servers after the user authorized
  * our app to access its Drive.
  */
-public class AuthCode extends HttpServlet {
+public class AuthCode extends WebappServletPluginExtension {
 
   /**
    * Logger for logging.
@@ -33,11 +35,6 @@ public class AuthCode extends HttpServlet {
   public static final String USERID = "userid";
   
   /**
-   * Serial version.
-   */
-  private static final long serialVersionUID = 1L;
-
-  /**
    * @see HttpServlet#HttpServlet()
    */
   public AuthCode() {
@@ -49,7 +46,7 @@ public class AuthCode extends HttpServlet {
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
    *      response)
    */
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     DbxWebAuth auth = Credentials.getFlow(request.getSession());
     DbxAuthFinish authFinish;
     try {
@@ -139,5 +136,10 @@ public class AuthCode extends HttpServlet {
   public static void setUserId(ServletRequest request, String userId) {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     httpRequest.getSession().setAttribute(AuthCode.USERID, userId);
+  }
+
+  @Override
+  public String getPath() {
+    return "dbx-oauth-callback";
   }
 }

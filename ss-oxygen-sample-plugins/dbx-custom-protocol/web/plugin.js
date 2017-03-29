@@ -83,7 +83,7 @@
             // if we do not have the user id we open the file ourselves and request authorization.
             chosen(null);
             // open the chosen file in a new tab.
-            var href = "../dbx/start?path=" + encodeURIComponent(path);
+            var href = "../plugins-dispatcher/dbx-start?path=" + encodeURIComponent(path);
             // we open the dropbox file in the same tab in order to prevent it to be
             // considered a pop-up and blocked.
             window.location.href = href;
