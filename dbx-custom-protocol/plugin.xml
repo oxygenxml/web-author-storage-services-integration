@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The plugin.dtd file is located in the OXYGEN_INSATALL_DIR/plugins directory -->
+<!DOCTYPE plugin SYSTEM "../plugin.dtd">
+
+<plugin
+ id="com.oxygenxml.examples.dbx.CustomProtocol"
+ name="DbxCustomProtocol"
+ description="An example of a custom protocol implementation that connects to the user's Dropbox."
+ version="${project.nosnapshot.version}"
+ vendor="SyncRO"
+ class="com.oxygenxml.examples.dbx.CustomProtocolPlugin"
+ classLoaderType="preferOxygenResources">
+ <runtime>
+  <librariesFolder name="lib"/>
+  
+  <library name="target/classes"/>
+  <librariesFolder name="target/lib" />
+ </runtime>
+ 
+ <extension type="URLHandler" 
+  class="com.oxygenxml.examples.dbx.CustomProtocolURLHandlerExtension"/>
+  
+ <extension type="WebappStaticResourcesFolder" 
+   path="resources/" href="dbx"/>
+ 
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.dbx.EntryPoint"/>
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.dbx.AuthCode"/>
+ <extension type="WebappServletFilter" 
+  class="com.oxygenxml.examples.dbx.DbxManagerFilter"/>
+</plugin>
