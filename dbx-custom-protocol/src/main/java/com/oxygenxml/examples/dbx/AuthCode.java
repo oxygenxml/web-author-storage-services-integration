@@ -68,7 +68,7 @@ public class AuthCode extends WebappServletPluginExtension {
     catch (DbxWebAuth.BadStateException ex) {
       logger.debug("Bad state exception", ex);
         // Send them back to the start of the auth flow.
-        response.sendRedirect("start");
+        response.sendRedirect("../oxygen.html");
         return;
     }
     catch (DbxWebAuth.CsrfException ex) {
