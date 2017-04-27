@@ -177,7 +177,7 @@ public class EntryPoint extends WebappServletPluginExtension {
             logger.debug("Redirecting the user to choose the template.");
             // Redirect the user to choose the template that they want for
             // the new document.
-            httpResponse.sendRedirect("NewFile.html?state=" + stateJson);
+            httpResponse.sendRedirect("../gdrive/NewFile.html?state=" + stateJson);
           }
         } else if (OPEN_ACTION.equals(state.action)) {
           // Open the specified file.
