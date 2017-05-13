@@ -3,10 +3,9 @@ package com.oxygenxml.examples.dbx;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.Properties;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
@@ -29,10 +28,9 @@ public class Credentials {
   /**
    * Default request config.
    */
-  private static final DbxRequestConfig DBX_REQUEST_CONFIG = new DbxRequestConfig(
-      "oXygenWebapp/1.0", 
-      Locale.getDefault().toString(),
-      new OxygenHttpRequestor());
+  private static final DbxRequestConfig DBX_REQUEST_CONFIG = DbxRequestConfig
+      .newBuilder("oXygenWebapp/1.0")
+      .build();
 
   /**
    * Application key.
@@ -57,14 +55,12 @@ public class Credentials {
    * 
    * @return The authorization flow.
    */
-  public static synchronized DbxWebAuth getFlow(HttpSession session) {
+  public static synchronized DbxWebAuth getFlow() {
     DbxAppInfo appInfo = new DbxAppInfo(APP_KEY, APP_SECRET);
 
     DbxRequestConfig config = getRequestConfig();
 
-    DbxSessionStore sessionStore = new DbxStandardSessionStore(session, "DBX_ATTR");
-
-    DbxWebAuth webAuth = new DbxWebAuth(config, appInfo, REDIRECT_URI, sessionStore);
+    DbxWebAuth webAuth = new DbxWebAuth(config, appInfo);
     return webAuth;
   }
 
@@ -101,5 +97,13 @@ public class Credentials {
    */
   public static String getAppKey() {
     return APP_KEY;
+  }
+  
+  /**
+   * @param httpRequest The user HTTP request.
+   * @return The session store.
+   */
+  public static DbxSessionStore getSessionStore(HttpServletRequest httpRequest) {
+     return new DbxStandardSessionStore(httpRequest.getSession(), "DBX_ATTR");
   }
 }

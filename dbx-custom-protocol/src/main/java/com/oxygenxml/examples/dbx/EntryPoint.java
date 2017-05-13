@@ -48,13 +48,23 @@ public class EntryPoint extends WebappServletPluginExtension {
     } else if (path != null) {
       // User authorization required.
       logger.debug("Starting authorizattion");
-      DbxWebAuth flow = Credentials.getFlow(httpRequest.getSession());
+      DbxWebAuth flow = Credentials.getFlow();
       String encodedPath = encodeUrl(path);
       // The URL to redirect the user to after authorization.
       String nextUrl = httpRequest.getRequestURL()
           .append("?path=").append(encodedPath).toString();
       logger.debug("Next url: " + nextUrl);
-      String authorizeUrl = flow.start(nextUrl); 
+      
+      DbxWebAuth.Request authRequest = DbxWebAuth.newRequestBuilder()
+          // After we redirect the user to the Dropbox website for authorization,
+          // Dropbox will redirect them back here.
+          .withRedirectUri(
+              Credentials.REDIRECT_URI, 
+              Credentials.getSessionStore(httpRequest))
+          .withState(nextUrl)
+          .build();
+      String authorizeUrl = flow.authorize(authRequest); 
+      
       logger.debug("Redirecting to auth url, path: " + encodedPath);
       httpResponse.sendRedirect(authorizeUrl);
     } else {

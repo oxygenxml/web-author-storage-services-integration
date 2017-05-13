@@ -8,6 +8,8 @@
   <properties>    
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <oxygen.version>18.1.0.0</oxygen.version>
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
     
 	<build>
@@ -137,6 +139,7 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
+            <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -150,9 +153,9 @@
 			<version>17.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.dropbox.core</groupId>
-			<artifactId>dropbox-core-sdk</artifactId>
-			<version>[1.7,1.8)</version>
+	        <groupId>com.dropbox.core</groupId>
+	        <artifactId>dropbox-core-sdk</artifactId>
+	        <version>3.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
