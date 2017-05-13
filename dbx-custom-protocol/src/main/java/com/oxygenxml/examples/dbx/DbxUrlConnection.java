@@ -11,9 +11,9 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxException.InvalidAccessToken;
-import com.dropbox.core.DbxException.NetworkIO;
-import com.dropbox.core.DbxWriteMode;
+import com.dropbox.core.InvalidAccessTokenException;
+import com.dropbox.core.NetworkIOException;
+import com.dropbox.core.v2.files.WriteMode;
 
 
 /**
@@ -84,7 +84,7 @@ public class DbxUrlConnection extends HttpURLConnection {
         ByteArrayOutputStream target = new ByteArrayOutputStream();
         try {
           logger.debug("Reading file " + path);
-          currentUserData.getClient().getFile(path, null, target);
+          currentUserData.getClient().files().download(path).download(target);
           responseCode = 200; 
         } catch (DbxException e) {
           logger.debug(e, e);
@@ -104,9 +104,9 @@ public class DbxUrlConnection extends HttpURLConnection {
    */
   private void exceptionWhileConnecting(Exception e) {
     boolean invalidAccessToken = false;
-    if (e instanceof InvalidAccessToken) {
+    if (e instanceof InvalidAccessTokenException) {
       invalidAccessToken = true;
-    } else if (e instanceof NetworkIO && e.getMessage().indexOf("401") != -1) {
+    } else if (e instanceof NetworkIOException && e.getMessage().indexOf("401") != -1) {
       // The oXygen HTTP protocol implementation may throw an exception
       // instead of returning 401. The error message will contain the "401" 
       // message.
@@ -210,7 +210,11 @@ public class DbxUrlConnection extends HttpURLConnection {
         logger.debug("User finished writing to the file. # of bytes: " + bytesToUpload.length);
         try {
           logger.debug("Uploading file");
-          currentUserData.getClient().uploadFile(path, DbxWriteMode.force(), bytesToUpload.length, new ByteArrayInputStream(bytesToUpload));
+          currentUserData.getClient().files()
+            .uploadBuilder(path)
+            .withMode(WriteMode.OVERWRITE)
+            .start()
+            .uploadAndFinish(new ByteArrayInputStream(bytesToUpload));
         } catch (DbxException e) {
           DbxManagerFilter.authorizationFailedForUser(userId);
           logger.debug(e, e);

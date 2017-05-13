@@ -47,7 +47,7 @@ public class AuthCode extends WebappServletPluginExtension {
    *      response)
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    DbxWebAuth auth = Credentials.getFlow(request.getSession());
+    DbxWebAuth auth = Credentials.getFlow();
     DbxAuthFinish authFinish;
     try {
         @SuppressWarnings("unchecked")
@@ -58,7 +58,10 @@ public class AuthCode extends WebappServletPluginExtension {
         		logger.debug(param.getKey() + " = " + Arrays.toString(param.getValue()));
         	}
         }
-        authFinish = auth.finish(parameterMap);
+        authFinish = auth.finishFromRedirect(
+            Credentials.REDIRECT_URI,
+            Credentials.getSessionStore(request), 
+            parameterMap);
     }
     catch (DbxWebAuth.BadRequestException ex) {
         logger.debug("On /dropbox-auth-finish: Bad request: " + ex.getMessage());
@@ -93,25 +96,25 @@ public class AuthCode extends WebappServletPluginExtension {
         response.sendError(503, "Error communicating with Dropbox.");
         return;
     }
-    String accessToken = authFinish.accessToken;
+    String accessToken = authFinish.getAccessToken();
     logger.debug("Authorization fisnished with access token: " + accessToken);
 
     // Save the access token somewhere (probably in your database) so you
     // don't need to send the user through the authorization process again.
     try {
-      DbxManagerFilter.setCredential(accessToken, authFinish.userId);
-      setUserId(request, authFinish.userId);
-      logger.debug("Set user id : " + authFinish.userId);
+      DbxManagerFilter.setCredential(accessToken, authFinish.getUserId());
+      setUserId(request, authFinish.getUserId());
+      logger.debug("Set user id : " + authFinish.getUserId());
     } catch (DbxException ex) {
-      DbxManagerFilter.authorizationFailedForUser(authFinish.userId);
+      DbxManagerFilter.authorizationFailedForUser(authFinish.getUserId());
       // Normally should not happen. We just got the token, so it is supposed to work.
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
           "Error communicating with Dropbox.");
       logger.error(ex, ex);
     }
     
-    logger.debug("Redirecting to " + authFinish.urlState.substring(1));
-    response.sendRedirect(authFinish.urlState.substring(1));
+    logger.debug("Redirecting to " + authFinish.getUrlState().substring(1));
+    response.sendRedirect(authFinish.getUrlState().substring(1));
   }
   
   /**

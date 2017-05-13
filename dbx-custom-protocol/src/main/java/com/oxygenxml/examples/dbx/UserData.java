@@ -2,8 +2,8 @@ package com.oxygenxml.examples.dbx;
 
 import java.io.IOException;
 
-import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.DbxClientV2;
 
 
 /**
@@ -19,7 +19,7 @@ public class UserData {
   /**
    * Dropbox client for the client user.
    */
-  private final DbxClient client;
+  private final DbxClientV2 client;
   
   /**
    * The name of the user.
@@ -32,11 +32,13 @@ public class UserData {
    * 
    * @param accessToken The access token for the current user.
    * @param userId The id of the current user.
+   * 
+   * @throws DbxException If it fails to retrieve the user name.
    */
   public UserData(String accessToken, String userId) throws IOException, DbxException {
-    client = new DbxClient(Credentials.getRequestConfig(), accessToken);
+    client = new DbxClientV2(Credentials.getRequestConfig(), accessToken);
     this.userId = userId;
-    userName = client.getAccountInfo().displayName;
+    userName = client.users().getCurrentAccount().getName().getDisplayName();
   }
   
   /**
@@ -53,7 +55,7 @@ public class UserData {
    * 
    * @return the dropbox client.
    */
-  public DbxClient getClient() {
+  public DbxClientV2 getClient() {
     return client;
   }
   
