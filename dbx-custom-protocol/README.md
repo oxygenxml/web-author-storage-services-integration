@@ -55,11 +55,10 @@ In the app creation wizzard you should choose:
 
 Then, in the next page you should fill in the following fields:
 
-- **Redirect URL**: This is the URL where Dropbox sends the OAuth token and should be the URL handled by the **AuthCode** servlet as detailed above. Depending on your configuration it might be `http://localhost:8080/storage-services-oxy-integration/dbx/oauth_callback`.
+- **Redirect URL**: This is the URL where Dropbox sends the OAuth token and should be the URL handled by the **AuthCode** servlet as detailed above. Depending on your configuration it might be `http://localhost:8080/oxygenxml-web-author/plugins-dispatcher/dbx-oauth-callback`.
 - **Drop-ins domains** - *localhost*
 
-The secrets of the app as provided in the app settings page should be provided in the
-**ss-oxygen-sample-webapp/src/main/webapp/WEB-INF/dbx-secrets.properties** file with the following format:
+The secrets of the app as provided in the app settings page should be provided in `options.xml` file of the Web Author with the following format:
 
 ```
     app_key=$APP_KEY$
@@ -67,9 +66,4 @@ The secrets of the app as provided in the app settings page should be provided i
     redirect_uri=$REDIRECT_URL$
 ```
 The `$REDIRECT_URL$` is the one filled in the settings page as detailed above.
-
-See It in Action
-----------------
-
-In order to use the application to edit files in your **Dropbox** account, you can go to [http://127.0.0.1:8080/storage-services-oxy-integration/dbx](http://127.0.0.1:8080/storage-services-oxy-integration/dbx) and follow the instructions there.
 
