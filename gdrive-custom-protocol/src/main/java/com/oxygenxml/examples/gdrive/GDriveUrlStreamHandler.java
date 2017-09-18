@@ -104,13 +104,13 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
         
       if (files.size() == 0) {
         FileNotFoundException ex = 
-            new FileNotFoundException("File " + crtPath + " not found");
+            new FileNotFoundException("File " + crtPath + " not found, url: " + url);
         logger.debug(ex, ex);
         throw ex;
       }
       if (files.size() > 1) {
         FileNotFoundException ex = 
-            new FileNotFoundException("There are multiple files called " + pathEntry +" in folder " + crtPath);
+            new FileNotFoundException("There are multiple files called " + pathEntry +" in folder " + crtPath + ", url: " + url);
         logger.debug(ex, ex);
         throw ex;
       }

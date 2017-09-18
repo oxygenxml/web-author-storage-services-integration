@@ -100,7 +100,7 @@ public class GDriveUrlConnection extends HttpURLConnection {
         final String fileDownloadUrl = file.getDownloadUrl();
         if (fileDownloadUrl == null || fileDownloadUrl.length() == 0) {
           // File has no content on drive.
-          throw new FileNotFoundException();
+          throw new FileNotFoundException(file.getTitle());
         }
         
         try {
