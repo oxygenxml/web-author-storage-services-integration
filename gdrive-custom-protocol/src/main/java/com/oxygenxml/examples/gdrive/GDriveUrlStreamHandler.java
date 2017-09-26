@@ -68,7 +68,7 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     logger.debug("Looking for file that corresponds to the URL: " + url.toExternalForm());
     String path = url.getPath();
     if (path.charAt(0) != '/') {
-      throw new FileNotFoundException("Not an absolute path");
+      throw new FileNotFoundException("Not an absolute path: " + url);
     }
     String[] pathEntries = path.substring(1).split("/");
     logger.debug("Path entries: " + Arrays.toString(pathEntries));
@@ -79,6 +79,9 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     // The first element in the path is the userId on behalf of which we 
     // are retrieving the file. The second one is the path type: 'drive', 'shared',
     // See: EntryPoint.computeFilePath(String, String).
+    if (pathEntries.length < 2) {
+      throw new FileNotFoundException("Malformed path:" + url);
+    }
     String pathType = pathEntries[1];
     for (int i = 2; i < pathEntries.length; i++) {
       String pathEntry = URLDecoder.decode(pathEntries[i], "UTF-8");
