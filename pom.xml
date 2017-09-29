@@ -10,7 +10,7 @@
   <artifactId>webapp-storage-services-integration</artifactId>
   <packaging>pom</packaging>
   <groupId>com.oxygenxml.samples</groupId>
-  <version>19.1-SNAPSHOT</version>
+  <version>20.0-SNAPSHOT</version>
 
   <description>A sample integration of the oXygen XML Author WebApp and two 
 	   online storage services: Google Drive and Dropbox.</description>
