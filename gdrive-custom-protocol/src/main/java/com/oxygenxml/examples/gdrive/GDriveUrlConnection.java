@@ -1,7 +1,7 @@
 package com.oxygenxml.examples.gdrive;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,9 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import ro.sync.net.protocol.http.HttpExceptionWithDetails;
-
-import com.google.api.client.http.FileContent;
+import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
@@ -24,26 +22,13 @@ import com.google.api.services.drive.model.File;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import ro.sync.net.protocol.http.HttpExceptionWithDetails;
+
 
 /**
  * Url connection to a file on google drive.
  */
 public class GDriveUrlConnection extends HttpURLConnection {
-
-  /**
-   * Temp directory.
-   */
-  private static java.io.File tempDir = new java.io.File(".");
-  
-  /**
-   * Sets the temp directory.
-   * 
-   * @param tempDir
-   */
-  public static void setTempDir(java.io.File tempDir) {
-    GDriveUrlConnection.tempDir = tempDir;
-  }
-  
   /**
    * Logger for logging.
    */
@@ -209,34 +194,18 @@ public class GDriveUrlConnection extends HttpURLConnection {
   public synchronized OutputStream getOutputStream() throws IOException {
     logger.debug("Starting to output in file " + file.getTitle());
     
-    final java.io.File tmpFile = java.io.File.createTempFile(
-        "gdrive-upload-", ".tmp", tempDir);
-    final FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
-    final FileContent fileContent = new FileContent(MIME_TYPE, tmpFile);
-    logger.debug("using tmp file: " + tmpFile.getAbsolutePath());
-    
-    return new OutputStream() {
-      @Override
-      public void write(int b) throws IOException {
-        fileOutputStream.write(b);
-      }
-      
-      @Override
-      public void flush() throws IOException {
-        fileOutputStream.flush();
-      }
-      
+    return new ByteArrayOutputStream() {
       @Override
       public void close() throws IOException {
+        final byte[] byteArray = super.toByteArray();
         logger.debug("writing to file...");
-        fileOutputStream.close();
         try {
           file.setMimeType(MIME_TYPE);
           // update the file.
           GDriveManagerFilter.executeWithRetry(GDriveUrlConnection.this.userId, new GDriveOperation<Void>() {
             @Override
             public Void executeOperation(Drive drive) throws IOException {
-              Update update = drive.files().update(file.getId(), file, fileContent);
+              Update update = drive.files().update(file.getId(), file, new ByteArrayContent(MIME_TYPE, byteArray));
               logger.debug(update);
               File uploadedFile = update.execute();
               logger.debug(file.getVersion() + " -> " + uploadedFile.getVersion());
@@ -256,9 +225,6 @@ public class GDriveUrlConnection extends HttpURLConnection {
             logger.warn(jsonParsingException, jsonParsingException);
           }
           throw new IOException(reason, e);
-        } finally {
-          tmpFile.delete();
-          logger.debug("deleted tmp file");
         }
       }
     };

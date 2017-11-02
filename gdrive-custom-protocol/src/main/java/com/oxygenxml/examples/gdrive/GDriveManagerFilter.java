@@ -295,7 +295,6 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
 
     // Set the temporary dir to be used by for storing files to be uploaded.
     java.io.File tmpDir = (File) servletContext.getAttribute(StartupServlet.OXYGEN_WEBAPP_DATA_DIR);
-    GDriveUrlConnection.setTempDir(tmpDir);
     
     File tokenDbFile = new File(tmpDir, "tokens-gdrive.properties");
     try {
