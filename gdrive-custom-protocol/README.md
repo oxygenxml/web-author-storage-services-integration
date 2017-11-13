@@ -5,14 +5,54 @@ Google Drive integration plugin
 Credentials Setup
 -----------------
 
-In order to communicate with the Google Drive service, you need to setup a project in the [Google Developer Console](https://console.developers.google.com/project). 
+In order to communicate with the Google Drive service, you need to:
 
-Then, in the **APIs** submenu, you should enable the **Drive SDK**, **Drive
-API** and **Google+ API**. The Google+ API is used to retrieve the author name.
+1. Setup a project in the [Google Developer Console](https://console.developers.google.com/project). 
+2. On the [project's dashboard](https://console.developers.google.com/apis/dashboard) the **Libraries** section, you should enable the **Drive SDK**, **Drive API** and **Google+ API**. The Google+ API is used to retrieve the author name.
+3. On the dashboard, you can be find in the **Credentials** submenu. You
+should **Create new Client ID**. The **Redirect URI** should be an URL like:
 
-![Enabling the Drive API](img/enable_api.png)
+```
+http://example.com/oxygen-xml-web-author/plugins-dispatcher/gdrive-oauth-callback
+```
 
-The **Drive SDK** should be further customized, by accessing the settings menu by
+The **Authorized Javascript Origins** should be populated with the domain name of your server.
+
+You, then should download the credentials in JSON format, by using the **Download
+JSON** button in the GUI.
+
+**Note:** Please make sure that you download the credentials for the **Client ID** that you just created.
+
+4. Add these credentials in the `options.xml` file, (https://www.oxygenxml.com/doc/ug-webauthor/topics/customizing-options.html#customizing-options__author_mode_options) similar to the fragment below:
+
+```
+ <!-- Google Drive config -->
+    <entry>
+      <String>PLUGIN_CUSTOM_OPTIONS.gdrive.password</String>
+      <String>the_password</String>
+    </entry>
+    <entry>
+      <String>PLUGIN_CUSTOM_OPTIONS.gdrive.secrets</String>
+      <String><![CDATA[
+ {
+  "web": {
+    "client_id": "**************.apps.googleusercontent.com",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "****************************",
+    "redirect_uris": ["http://example.com/oxygen-xml-web-author/plugins-dispatcher/gdrive-oauth-callback"],
+    "javascript_origins": ["http://example.com",
+    "https://example.com"]
+  }
+}
+]]></String>
+```
+
+Integrating in Google Drive context menu
+----------------------------------------
+
+On the [project's dashboard](https://console.developers.google.com/apis/dashboard), the **Libraries** section, the **Drive SDK** can be further customized, by accessing the settings menu by
 clicking on the gear button near the **Drive SDK** label. In the settings page, you should fill in the **Application Name**, **Short Description**, **Full Description** and upload several icons for the application. In the **Drive Integration** section you should change **only** the following
 settings:
 
@@ -25,43 +65,6 @@ settings:
     described above.
 - **Mobile Browser Support** - *checked*
 
-The credentials of the app, can be found in the **Credentials** submenu. You
-should **Create new Client ID**. The **Redirect URI** should be the URL where the
-**AuthCode** is bound, as described above. The **Authorized Javascript
-Origins** field is not important for us; leave it as it is.
-
-![Create Client Id](img/create_client_id.png)
-
-You, then should download the credentials in JSON format, by using the **Download
-JSON** button in the GUI.
-
-**Note:** Please make sure that you download the credentials for the **Client ID** that you just created.
-
-![Download credentials](img/download_credentials.png)
-
-Then you should add these credentials in the `options.xml` file, (https://www.oxygenxml.com/doc/ug-webauthor/topics/customizing-options.html#customizing-options__author_mode_options) similar to the fragment below:
-
-```
- <!-- Google Drive config -->
-    <entry>
-      <String>PLUGIN_CUSTOM_OPTIONS.gdrive.password</String>
-      <String>the_password</String>
-    </entry>
-    <entry>
-      <String>PLUGIN_CUSTOM_OPTIONS.gdrive.secrets</String>
-      <String><![CDATA[{
-  "web": {
-    "client_id": "**************.apps.googleusercontent.com",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://accounts.google.com/o/oauth2/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_secret": "****************************",
-    "redirect_uris": ["http://example.com/oxygen-xml-web-author/plugins-dispatcher/gdrive-oauth-callback"],
-    "javascript_origins": ["http://example.com",
-    "https://example.com"]
-  }
-}]]></String>
-```
 
 Architecture
 --------------
