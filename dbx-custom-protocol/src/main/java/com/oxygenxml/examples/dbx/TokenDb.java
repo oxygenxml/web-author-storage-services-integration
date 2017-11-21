@@ -1,6 +1,7 @@
 package com.oxygenxml.examples.dbx;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,8 +9,6 @@ import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
-import de.schlichtherle.io.FileInputStream;
 
 /**
  * A simple database backed by a properties file.

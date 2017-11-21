@@ -4,7 +4,6 @@ package com.oxygenxml.examples.dbx;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,9 +19,9 @@ import org.apache.log4j.Logger;
 import com.dropbox.core.DbxException;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
+import ro.sync.ecss.extensions.api.webapp.SessionStore;
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.exml.plugin.PluginExtension;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.options.WSOptionsStorage;
@@ -34,6 +33,11 @@ import ro.sync.servlet.StartupServlet;
  */
 public class DbxManagerFilter implements Filter, PluginExtension {
   
+  /**
+   * Key used to store user data in session store.
+   */
+  private static final String DBX_USR_DATA_KEY = "dbx.usr.data";
+
   /**
    * Logger for logging.
    */
@@ -79,14 +83,6 @@ public class DbxManagerFilter implements Filter, PluginExtension {
   }
   
   /**
-   * The user connections.
-   */
-  public static final Cache<String, Optional<UserData>> userConnections = CacheBuilder.newBuilder()
-      .maximumSize(10000)
-      .expireAfterWrite(24, TimeUnit.HOURS)
-      .build();
-
-  /**
    * The token db.
    */
   private static TokenDb tokenDb;
@@ -105,18 +101,18 @@ public class DbxManagerFilter implements Filter, PluginExtension {
   private static synchronized UserData getUserDataUnauthenticated(String userId) {
     UserData userData = null;
     if (userId != null) {
-      Optional<UserData> maybeUserData = userConnections.getIfPresent(userId);
+      Optional<UserData> maybeUserData = getSessionStore().get(userId, DBX_USR_DATA_KEY);
       if (maybeUserData == null) {
         logger.debug("token expired. loading from the db");
         tryToLoadFromDb(userId);
         
         // Check if we found some user data. 
-        maybeUserData = userConnections.getIfPresent(userId);
+        maybeUserData = getSessionStore().get(userId, DBX_USR_DATA_KEY);
         if (maybeUserData == null) {
           // Mark the user as non existent in the db.
           logger.debug("User " + userId + " not present in the database.");
           maybeUserData = Optional.<UserData>absent();
-          userConnections.put(userId, maybeUserData);
+          getSessionStore().put(userId, DBX_USR_DATA_KEY, maybeUserData);
         }
       }
       userData = maybeUserData.orNull();
@@ -156,7 +152,9 @@ public class DbxManagerFilter implements Filter, PluginExtension {
   public static synchronized UserData setCredential(String authToken, String userId) 
       throws IOException, DbxException {
     UserData userData = new UserData(authToken, userId);
-    userConnections.put(userData.getId(), Optional.of(userData));
+    
+    getSessionStore().put(userData.getId(), DBX_USR_DATA_KEY, Optional.of(userData));
+    
     tokenDb.storeToken(userId, authToken);
     logger.debug("Setting credential for user " + userData.getId());
     return userData;
@@ -171,7 +169,8 @@ public class DbxManagerFilter implements Filter, PluginExtension {
    */
   public static void authorizationFailedForUser(String userId) throws IOException {
     logger.debug("User " + userId + " authorization expired.");
-    userConnections.invalidate(userId);
+    getSessionStore().remove(userId, DBX_USR_DATA_KEY);
+    
     throw new IOException("Please authorize oXygen Author Webapp to access your Dropbox files.");
   }
   
@@ -246,5 +245,13 @@ public class DbxManagerFilter implements Filter, PluginExtension {
 		// Set the app key so that it can be used in JSP.
 		String appKey = Credentials.getAppKey();
 		fConfig.getServletContext().setAttribute("dbx.app.key", appKey);
+	}
+	
+	/**
+	 * @return The plugin session store.
+	 */
+	private static SessionStore getSessionStore() {
+	  WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
+	  return workspace.getSessionStore();
 	}
 }

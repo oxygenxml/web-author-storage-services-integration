@@ -4,7 +4,6 @@ package com.oxygenxml.examples.gdrive;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,9 +24,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
+import ro.sync.ecss.extensions.api.webapp.SessionStore;
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.exml.plugin.PluginExtension;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.options.WSOptionsStorage;
@@ -40,6 +39,12 @@ import ro.sync.servlet.StartupServlet;
  */
 public class GDriveManagerFilter implements Filter, PluginExtension {
   
+  /**
+   * Key used to store google drive session information on the session store.
+   */
+  private static final String G_DRIVE_SESSIONS_KEY = "g-drive.sessions";
+
+
   /**
    * Logger for logging.
    */
@@ -86,15 +91,6 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
   }
   
   /**
-   * The user connections.
-   */
-  public static final Cache<String, Optional<UserData>> userConnections = CacheBuilder.newBuilder()
-      .maximumSize(10000)
-      .expireAfterWrite(24, TimeUnit.HOURS)
-      .build();
-  
-  
-  /**
    * Returns the status code of the HTTP request that thrown the given exception
    * or 0 if it cannot be determined.
    * 
@@ -138,7 +134,9 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
       // of the error, we retry the operation.
       if (statusCode == HttpServletResponse.SC_UNAUTHORIZED || statusCode == 0) {
         logger.debug("User " + userId + " authorization expired.");
-        userConnections.invalidate(userId);
+        
+        getSessionStore().remove(userId, G_DRIVE_SESSIONS_KEY);
+        
         logger.debug("retrying operation....");
         UserData userData = getCurrentUserData(userId);
         return operation.executeOperation(userData.getDrive());
@@ -163,18 +161,18 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
   private synchronized static UserData getUserDataUnauthenticated(String userId) throws AuthorizationRequiredException {
     UserData userData = null;
     if (userId != null) {
-      Optional<UserData> maybeUserData = userConnections.getIfPresent(userId);
+      Optional<UserData> maybeUserData = getSessionStore().get(userId, G_DRIVE_SESSIONS_KEY);
       if (maybeUserData == null) {
         logger.debug("token expired. loading from the db");
         tryToLoadFromDb(userId);
         
         // Check if we found some user data. 
-        maybeUserData = userConnections.getIfPresent(userId);
+        maybeUserData = getSessionStore().get(userId, G_DRIVE_SESSIONS_KEY);
         if (maybeUserData == null) {
           // Mark the user as non existent in the db.
           logger.debug("User " + userId + " not present in the database.");
           maybeUserData = Optional.<UserData>absent();
-          userConnections.put(userId, maybeUserData);
+          getSessionStore().put(userId, G_DRIVE_SESSIONS_KEY, maybeUserData);
         }
       }
       userData = maybeUserData.orNull();
@@ -229,7 +227,8 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
     GoogleCredential credential = new GoogleCredential().setFromTokenResponse(response); 
     UserData userData = new UserData(credential);
     String userId = userData.getId();
-    userConnections.put(userId, Optional.of(userData));
+    
+    getSessionStore().put(userId, G_DRIVE_SESSIONS_KEY, Optional.of(userData));
     if (refreshToken != null) {
       logger.debug("Storing in the db: " + refreshToken);
       tokenDb.storeToken(userId, refreshToken);
@@ -317,5 +316,13 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
     // Set the client id here so that it can be used from JSP.
     String clientId = Credentials.getInstance().getClientId();
     servletContext.setAttribute("gdrive.client.id", clientId);
+  }
+  
+  /**
+   * @return The plugin session store.
+   */
+  private static SessionStore getSessionStore() {
+    WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
+    return workspace.getSessionStore();
   }
 }
