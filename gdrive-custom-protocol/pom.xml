@@ -8,6 +8,9 @@
 	
     <properties>    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- This version should be changed to a released one when switching to a release branch -->
+        <oxygen.version>20.0-SNAPSHOT</oxygen.version>
     </properties>
     
 	<repositories>
@@ -123,7 +126,7 @@
 	   <dependency>
            <groupId>com.oxygenxml</groupId>
            <artifactId>oxygen-webapp</artifactId>
-           <version>${project.version}</version>
+           <version>${oxygen.version}</version>
            <classifier>classes</classifier>
            <scope>provided</scope>
         </dependency>
