@@ -2,9 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+  
+  <parent>
     <groupId>com.oxygenxml.samples</groupId>
-	<version>20.0-SNAPSHOT</version>
-	<artifactId>gdrive-custom-protocol</artifactId>
+    <artifactId>web-author-storage-services-plugin</artifactId>
+    <version>20.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>web-author-google-drive-plugin</artifactId>
+  <name>Web Author Google Drive Plugin</name>
+  <description>A plugin for oXygen XML Web Author to allow editing files on Google Drive</description>
 	
     <properties>    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
