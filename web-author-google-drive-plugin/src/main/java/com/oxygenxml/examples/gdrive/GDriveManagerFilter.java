@@ -137,6 +137,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
         
         getSessionStore().remove(userId, G_DRIVE_SESSIONS_KEY);
         
+        logger.warn("Failed login attempt of user " + userId);
         logger.debug("retrying operation....");
         UserData userData = getCurrentUserData(userId);
         return operation.executeOperation(userData.getDrive());

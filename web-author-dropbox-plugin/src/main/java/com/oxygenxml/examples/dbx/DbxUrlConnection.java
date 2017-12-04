@@ -103,17 +103,11 @@ public class DbxUrlConnection extends HttpURLConnection {
    * Code to handle an exception while downloading the file.
    */
   private void exceptionWhileConnecting(Exception e) {
-    boolean invalidAccessToken = false;
-    if (e instanceof InvalidAccessTokenException) {
-      invalidAccessToken = true;
-    } else if (e instanceof NetworkIOException && e.getMessage().indexOf("401") != -1) {
+    if (e instanceof InvalidAccessTokenException || (e instanceof NetworkIOException && e.getMessage().indexOf("401") != -1)) {
       // The oXygen HTTP protocol implementation may throw an exception
       // instead of returning 401. The error message will contain the "401" 
       // message.
-      invalidAccessToken = true;
-    }
-    
-    if (invalidAccessToken) {
+      
       try {
         DbxManagerFilter.authorizationFailedForUser(userId);
       } catch (IOException ex) {
@@ -130,18 +124,20 @@ public class DbxUrlConnection extends HttpURLConnection {
    */
   @Override
   public synchronized InputStream getInputStream() throws IOException {
+    byte[] bytes = null;
     if (doInput) {
       // Make sure the connection is connected.
       connect();
       if (downloadException != null) {
         throw downloadException;
-      } else {
-        return new ByteArrayInputStream(downloadedBytes);
       }
+      
+      bytes = downloadedBytes;
     } else {
       logger.warn("Dbx output connection used for input");
-      return new ByteArrayInputStream(new byte[0]);
+      bytes = new byte[0];
     }
+    return new ByteArrayInputStream(bytes);
   }
 
   /**
@@ -216,8 +212,8 @@ public class DbxUrlConnection extends HttpURLConnection {
             .start()
             .uploadAndFinish(new ByteArrayInputStream(bytesToUpload));
         } catch (DbxException e) {
-          DbxManagerFilter.authorizationFailedForUser(userId);
           logger.debug(e, e);
+          DbxManagerFilter.authorizationFailedForUser(userId);
         }
         logger.debug("done.");
       }

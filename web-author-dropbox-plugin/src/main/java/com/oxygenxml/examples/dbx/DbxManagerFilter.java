@@ -72,7 +72,7 @@ public class DbxManagerFilter implements Filter, PluginExtension {
   public static UserData getCurrentUserData(String userId) {
     UserData fileUserDrive = getUserDataUnauthenticated(userId);
     UserData currentUserDrive = currentUserData.get();
-    if (currentUserDrive != null && currentUserDrive != fileUserDrive) {
+    if (currentUserDrive != null && !currentUserDrive.equals(fileUserDrive)) {
       logger.error("Current user is not the owner of the file. ");
       logger.error(currentUserDrive.getId() + " != " + userId);
       // The current user trying to access the file is not the same as the user 
@@ -171,6 +171,7 @@ public class DbxManagerFilter implements Filter, PluginExtension {
     logger.debug("User " + userId + " authorization expired.");
     getSessionStore().remove(userId, DBX_USR_DATA_KEY);
     
+    logger.warn("Failed login attempt of user " + userId);
     throw new IOException("Please authorize oXygen Author Webapp to access your Dropbox files.");
   }
   
