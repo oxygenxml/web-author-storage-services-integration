@@ -13,10 +13,9 @@
   <description>A plugin for oXygen XML Web Author to allow editing files on Google Drive</description>
 	
     <properties>    
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
         <!-- This version should be changed to a released one when switching to a release branch -->
         <oxygen.version>20.0-SNAPSHOT</oxygen.version>
+        <sonar.sources>src/main/java,web</sonar.sources>
     </properties>
     
 	<repositories>
