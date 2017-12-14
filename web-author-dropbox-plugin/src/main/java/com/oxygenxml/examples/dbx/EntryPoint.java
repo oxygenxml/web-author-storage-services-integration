@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import com.dropbox.core.DbxWebAuth;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
-import ro.sync.util.URLUtil;
+import ro.sync.basic.util.URLUtil;
 
 /**
  * Entry point for our app from the Google Drive UI.
