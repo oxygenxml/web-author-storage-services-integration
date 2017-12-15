@@ -16,28 +16,7 @@
   </properties>
     
 	<build>
-		<finalName>${project.artifactId}-${project.nosnapshot.version}</finalName>
     <plugins>
-      <!-- remove the -SNAPSHOT from packaged plugin -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>set-version-no-snapshot</id>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>project.nosnapshot.version</name>
-              <value>${project.version}</value>
-              <regex>-SNAPSHOT</regex>
-              <replacement></replacement>
-              <failIfNoMatch>false</failIfNoMatch>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>     
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
@@ -55,21 +34,6 @@
 					</execution>
 				</executions>
 			</plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>
-              <includeScope>runtime</includeScope>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 		</plugins>
 	</build>
 	<repositories>
@@ -90,31 +54,15 @@
 		</repository>
 	</repositories>
 	<dependencies>
-        <dependency>
-           <groupId>com.oxygenxml</groupId>
-           <artifactId>oxygen-webapp</artifactId>
-           <version>${oxygen.version}</version>
-           <classifier>classes</classifier>
-           <scope>provided</scope>
-        </dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-            <scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-	        <groupId>com.dropbox.core</groupId>
-	        <artifactId>dropbox-core-sdk</artifactId>
-	        <version>3.0.3</version>
-		</dependency>
+    <dependency>
+      <groupId>com.dropbox.core</groupId>
+      <artifactId>dropbox-core-sdk</artifactId>
+      <version>3.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.11</version>
+    </dependency>
 	</dependencies>
 </project>

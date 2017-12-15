@@ -4,6 +4,8 @@ package com.oxygenxml.examples.dbx;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,15 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxException;
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.exml.plugin.PluginExtension;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.options.WSOptionsStorage;
-import ro.sync.servlet.StartupServlet;
 
 /**
  * Filter responsible with determining the context of an URL connection, i.e.
@@ -111,11 +110,11 @@ public class DbxManagerFilter implements Filter, PluginExtension {
         if (maybeUserData == null) {
           // Mark the user as non existent in the db.
           logger.debug("User " + userId + " not present in the database.");
-          maybeUserData = Optional.<UserData>absent();
+          maybeUserData = Optional.<UserData>empty();
           getSessionStore().put(userId, DBX_USR_DATA_KEY, maybeUserData);
         }
       }
-      userData = maybeUserData.orNull();
+      userData = maybeUserData.orElse(null);
     }
     return userData;
   }
@@ -224,7 +223,7 @@ public class DbxManagerFilter implements Filter, PluginExtension {
     }
 
     // Set the temporary dir to be used by for storing files to be uploaded.
-    java.io.File workDir = (File) servletContext.getAttribute(StartupServlet.OXYGEN_WEBAPP_DATA_DIR);
+    java.io.File workDir = (File) servletContext.getAttribute(WebappPluginWorkspace.OXYGEN_WEBAPP_DATA_DIR);
 		
 		File tokenDbFile = new File(workDir, "tokens-dbx.properties");
 		try {
@@ -239,7 +238,7 @@ public class DbxManagerFilter implements Filter, PluginExtension {
     }
 
 		try {
-			Credentials.setCredentialsFromStream(new ByteArrayInputStream(secrets.getBytes(Charsets.UTF_8)));
+			Credentials.setCredentialsFromStream(new ByteArrayInputStream(secrets.getBytes(StandardCharsets.UTF_8)));
 		} catch (IOException e) {
 			throw new ServletException("Could not read the client secrets.", e);
 		}

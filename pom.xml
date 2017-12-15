@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.oxygenxml</groupId>
-    <artifactId>oxygen-superpom-standard</artifactId>
+    <artifactId>oxygen-plugins-superpom</artifactId>
     <version>20.0-SNAPSHOT</version>
   </parent>
   <packaging>pom</packaging>
