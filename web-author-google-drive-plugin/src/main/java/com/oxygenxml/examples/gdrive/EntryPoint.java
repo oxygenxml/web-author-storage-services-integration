@@ -30,6 +30,7 @@ import com.google.api.services.drive.model.ParentReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 
 
@@ -120,6 +121,7 @@ public class EntryPoint extends WebappServletPluginExtension {
 	public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
 	  String stateJson = httpRequest.getParameter("state");
     logger.debug("Request with state: " + stateJson);
+    String encodedStateJson = URLUtil.encodeURIComponent(stateJson);
     
     String userId = AuthCode.getUserId(httpRequest);
     logger.debug("Checking user " + userId + " for authorization");
@@ -137,7 +139,7 @@ public class EntryPoint extends WebappServletPluginExtension {
       // if the user starts from this page directly.
       String redirectUri = null;
       if (stateJson != null) {
-        redirectUri = httpRequest.getRequestURI() + "?state=" + stateJson;
+        redirectUri = httpRequest.getRequestURI() + "?state=" + encodedStateJson;
       } else {
         // User landed on this page and our app is authorized, teach the user
         // how to use the Google drive app. 
@@ -145,54 +147,52 @@ public class EntryPoint extends WebappServletPluginExtension {
       }
       sendAuthorizationRequest(httpResponse, redirectUri);
     } else {
-      if (stateJson != null) {
-        State state = new State(stateJson);
-        logger.debug("Requesting user data for user: " + userId);
-        
-        String filePath = null;
-        if (CREATE_ACTION.equals(state.action)) {
-          String urlParam = httpRequest.getParameter("url");
-          if (urlParam != null) {
-            // The user has already chosen the template, create it in the
-            // Google Drive.
-            logger.debug("Creating new document with template: " + urlParam);
-            URL url = new URL(URLDecoder.decode(urlParam, UTF_8_ENCODING));
-            
-            // If the filename is not specified, generate one.
-            String fileName = httpRequest.getParameter("file_name");
-            if (fileName == null) {
-              fileName = generateFileName();
-            }
-            
-            try {
-              filePath = createNewTopic(state.folderId, fileName, url, userId);
-            } catch (AuthorizationRequiredException e) {
-              // Ask the user for authorization.
-              String redirectURL = httpRequest.getRequestURI() + "?state=" + stateJson;
-              sendAuthorizationRequest(httpResponse, redirectURL);
-              return;
-            }
-            openInWebapp(httpResponse, userId, filePath, userData.getUserName());
-          } else {
-            logger.debug("Redirecting the user to choose the template.");
-            // Redirect the user to choose the template that they want for
-            // the new document.
-            httpResponse.sendRedirect("../gdrive/NewFile.html?state=" + stateJson);
+      State state = new State(stateJson);
+      logger.debug("Requesting user data for user: " + userId);
+      
+      String filePath = null;
+      if (CREATE_ACTION.equals(state.action)) {
+        String urlParam = httpRequest.getParameter("url");
+        if (urlParam != null) {
+          // The user has already chosen the template, create it in the
+          // Google Drive.
+          logger.debug("Creating new document with template: " + urlParam);
+          URL url = new URL(URLDecoder.decode(urlParam, UTF_8_ENCODING));
+          
+          // If the filename is not specified, generate one.
+          String fileName = httpRequest.getParameter("file_name");
+          if (fileName == null) {
+            fileName = generateFileName();
           }
-        } else if (OPEN_ACTION.equals(state.action)) {
-          // Open the specified file.
-          Iterator<String> idsIterator = state.ids.iterator();
+          
           try {
-            filePath = computeFilePath(idsIterator.next(), userId);
+            filePath = createNewTopic(state.folderId, fileName, url, userId);
           } catch (AuthorizationRequiredException e) {
             // Ask the user for authorization.
-            String redirectURL = httpRequest.getRequestURI() + "?state=" + stateJson;
+            String redirectURL = httpRequest.getRequestURI() + "?state=" + encodedStateJson;
             sendAuthorizationRequest(httpResponse, redirectURL);
             return;
           }
-          logger.debug("Opening the file in the webapp: " + filePath);
           openInWebapp(httpResponse, userId, filePath, userData.getUserName());
+        } else {
+          logger.debug("Redirecting the user to choose the template.");
+          // Redirect the user to choose the template that they want for
+          // the new document.
+          httpResponse.sendRedirect("../gdrive/NewFile.html?state=" + encodedStateJson);
         }
+      } else if (OPEN_ACTION.equals(state.action)) {
+        // Open the specified file.
+        Iterator<String> idsIterator = state.ids.iterator();
+        try {
+          filePath = computeFilePath(idsIterator.next(), userId);
+        } catch (AuthorizationRequiredException e) {
+          // Ask the user for authorization.
+          String redirectURL = httpRequest.getRequestURI() + "?state=" + encodedStateJson;
+          sendAuthorizationRequest(httpResponse, redirectURL);
+          return;
+        }
+        logger.debug("Opening the file in the webapp: " + filePath);
+        openInWebapp(httpResponse, userId, filePath, userData.getUserName());
       }
     }
 	}
