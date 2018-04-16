@@ -57,7 +57,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
    * This is correct only for code running on the Tomcat's threads. For the
    * code running in thread pools it is null.
    */
-  private static final ThreadLocal<UserData> currentUserData = 
+  private static final ThreadLocal<UserRequest> currentUserRequest = 
       new ThreadLocal<>();
 
   /**
@@ -79,13 +79,22 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
    */
   public static UserData getCurrentUserData(String userId) throws AuthorizationRequiredException {
     UserData fileUserDrive = getUserDataUnauthenticated(userId);
-    UserData currentUserDrive = currentUserData.get();
-    if (currentUserDrive != null && currentUserDrive != fileUserDrive) {
-      logger.error("Current user is not the owner of the file. ");
-      // The current user trying to access the file is not the same as the user 
-      // that the file belongs to.
-      fileUserDrive = null;
+    
+    UserRequest userRequest = currentUserRequest.get();
+    
+    if (userRequest != null) {
+      UserData currentUserDrive = userRequest.getUserData();
+      
+      if (currentUserDrive == null || currentUserDrive != fileUserDrive) {
+        logger.error("Current user is not the owner of the file. ");
+        // The current user trying to access the file is not the same as the user 
+        // that the file belongs to.
+        fileUserDrive = null;
+      }
+    } else {
+      // This is not a user request. We are more lenient with these requests.
     }
+    
     return fileUserDrive;
   }
   
@@ -263,24 +272,24 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
 	  // Find the user on behalf of which we are executing.
 	  String userId = AuthCode.getUserId(httpRequest);
 	  logger.debug("Request from user: " + userId);
-    UserData service = null;
+    UserData userData = null;
     try {
-      service = getUserDataUnauthenticated(userId);
+      userData = getUserDataUnauthenticated(userId);
     } catch (AuthorizationRequiredException e) {
       // The uers revoked the authorization while editing.. 
       // We do not attempt any recovery.
       logger.warn("User " + userId + " revoked access to our app while editing.");
     }
-    logger.debug("Found drive " + service);
+    logger.debug("Found drive " + userData);
     
     // Set the current drive if there is one available for the current user.
-    currentUserData.set(service);
+    currentUserRequest.set(new UserRequest(userData));
     logger.debug("Drive set for thread " + Thread.currentThread().getId());
     try {
       chain.doFilter(request, response);
     } finally {
       logger.debug("Drive removed for thread " + Thread.currentThread().getId());
-      currentUserData.remove();
+      currentUserRequest.remove();
     }
     logger.debug("Request from user " + userId + " finished.");
 	}
