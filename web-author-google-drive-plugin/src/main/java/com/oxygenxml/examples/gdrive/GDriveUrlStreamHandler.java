@@ -15,6 +15,10 @@ import org.apache.log4j.Logger;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
+import ro.sync.ecss.extensions.api.webapp.WebappMessage;
+
+import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
+
 /**
  * URL stream handler implementation backed by Google Drive.
  */
@@ -41,8 +45,9 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     try {
       file = getFileToDownload(url, userId);
     } catch (AuthorizationRequiredException e) {
-      logger.warn("Authorization revoked while editing", e);
+      throw new UserActionRequiredException(new WebappMessage(WebappMessage.MESSAGE_TYPE_CUSTOM, "Authentication Required", "", true));
     }
+    
     if (file == null) {
       throw new FileNotFoundException(url.toExternalForm());
     }

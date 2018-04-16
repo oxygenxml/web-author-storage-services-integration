@@ -2,13 +2,14 @@ var loadGDriveAuthApi = null;
 
 (function () {
 
-
   /**
    * A implementation class for URL choosers for google drive
    *
    * @constructor
+   *
+   * @extends {sync.api.UrlChooser}
    */
-  GDriveUrlChooser = function () {
+  var GDriveUrlChooser = function () {
     sync.api.UrlChooser.call(this);
     this.obtainAppClienId();
     this.scope = [
@@ -35,6 +36,7 @@ var loadGDriveAuthApi = null;
    * @param {sync.api.UrlChooser.Purpose} purpose The purpose the chooser is
    * invoked with.
    */
+  /** @override */
   GDriveUrlChooser.prototype.chooseUrl = function (context, chosen, purpose) {
     this.chooseUrlInternal_(context, chosen, purpose);
   };
@@ -70,7 +72,7 @@ var loadGDriveAuthApi = null;
     if (this.gDriveToken) {
       this.choose_(context,
           goog.bind(function(callback, data) {
-            if(data.action == 'picked') {
+            if(data.action === 'picked') {
               var fileId = data.docs[0].id;
               chosen(null);
               this.openFileById(fileId);
@@ -88,9 +90,9 @@ var loadGDriveAuthApi = null;
    */
   GDriveUrlChooser.prototype.choose_ = function (context, callback) {
     var viewID = google.picker.ViewId.DOCS;
-    if(context.getType() == sync.api.UrlChooser.Type.IMAGE) {
+    if(context.getType() === sync.api.UrlChooser.Type.IMAGE) {
       viewID = google.picker.ViewId.DOCS_IMAGES;
-    } else if(context.getType() == sync.api.UrlChooser.Type.GENERIC) {
+    } else if(context.getType() === sync.api.UrlChooser.Type.GENERIC) {
       viewID = google.picker.ViewId.DOCS;
     }
     var view = new google.picker.DocsView(viewID);
@@ -124,6 +126,10 @@ var loadGDriveAuthApi = null;
    */
   GDriveUrlChooser.prototype.obtainAuthorization = function(callback) {
     var authCallback = goog.bind(function(authResult){
+      if (authResult.error) {
+        console.error(authResult.error);
+      }
+
       if (authResult && !authResult.error && authResult.access_token) {
         this.gDriveToken = authResult.access_token;
         this.obtainUserId();
@@ -142,7 +148,8 @@ var loadGDriveAuthApi = null;
    * Obtain the userId from the gplus api.
    */
   GDriveUrlChooser.prototype.obtainUserId = function() {
-    if (!this.userId) {
+    // gapi.client.plus will be undefined until the GDrive Auth Api loads.
+    if (!this.userId && gapi.client.plus) {
       var request = gapi.client.plus.people.get({
         'userId': 'me'
       });
@@ -159,11 +166,11 @@ var loadGDriveAuthApi = null;
    * @param data data received from the picker.
    */
   GDriveUrlChooser.prototype.chooserCallback = function (callback, data) {
-    if(data.action == 'picked') {
+    if(data.action === 'picked') {
       var fileId = data.docs[0].id;
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = goog.bind(function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
           var chosenUrl = xhr.responseText;
           chosenUrl = 'gdrive:///' + this.userId + chosenUrl;
           callback(chosenUrl);
@@ -217,7 +224,7 @@ var loadGDriveAuthApi = null;
    * @param data the response from the picker.
    */
   GDriveUrlChooser.prototype.pickerCallback = function(fileURL, fileName, callback, data) {
-    if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+    if (data[google.picker.Response.ACTION] === google.picker.Action.PICKED) {
       var doc = data[google.picker.Response.DOCUMENTS][0];
       var folderId = doc[google.picker.Document.ID];
       this.saveToDrive(fileURL, fileName, folderId, callback);
@@ -294,8 +301,7 @@ var loadGDriveAuthApi = null;
       userId: this.userId
     });
     var gDriveEntryPoint = '../plugins-dispatcher/gdrive-start';
-    var fileUrl = gDriveEntryPoint + '?state=' + encodeURIComponent(state);
-    window.location.href = fileUrl;
+    window.location.href = gDriveEntryPoint + '?state=' + encodeURIComponent(state);
   };
 
   /**
@@ -355,7 +361,7 @@ var loadGDriveAuthApi = null;
   };
 
   var url = sync.util.getURLParameter('url');
-  if(!url || (url && url.indexOf('gdrive') == 0)) {
+  if(!url || (url.indexOf('gdrive') === 0)) {
     // The google drive url chooser.
     var gDriveUrlChooser = new GDriveUrlChooser();
     loadGDriveAuthApi = goog.bind(gDriveUrlChooser.loadGDriveAuthApi, gDriveUrlChooser);
@@ -400,8 +406,37 @@ var loadGDriveAuthApi = null;
       actionsManager.registerCreateAction(createAction);
       actionsManager.registerOpenAction(openAction);
 
-    } else if (url.indexOf('gdrive') == 0) {
+    } else if (url.indexOf('gdrive') === 0) {
       workspace.setUrlChooser(gDriveUrlChooser);
     }
+
+    /**
+     * Tracks the status of the editor.
+     * @type {boolean}
+     */
+    var editorLoaded = false;
+    goog.events.listenOnce(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
+      goog.events.listenOnce(e.editor, sync.api.Editor.EventTypes.CUSTOM_MESSAGE_RECEIVED, function(e) {
+        /*
+        * We only auto-login once before Editor load.
+        * CUSTOM_MESSAGE_RECEIVED can be thrown during editing and we don't want to handle that possibility.
+        * */
+        if ('Authentication Required' === e.message.title && !editorLoaded) {
+          e.preventDefault();
+
+          var state = JSON.stringify({
+            ids : [sync.util.getApiParams().url],
+            action: "load",
+            userId: this.userId
+          });
+
+          // We navigate to `gdrive-start` which will walk the user through an OAuth flow and redirect back here.
+          window.location.href = '../plugins-dispatcher/gdrive-start?state=' + encodeURIComponent(state);
+        }
+      });
+    });
+    goog.events.listenOnce(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
+      editorLoaded = true;
+    });
   }
 })();

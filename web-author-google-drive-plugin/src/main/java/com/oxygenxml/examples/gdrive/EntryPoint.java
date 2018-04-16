@@ -66,6 +66,11 @@ public class EntryPoint extends WebappServletPluginExtension {
   private static final String CREATE_ACTION = "create";
 
   /**
+   * The "Load" action sent by the Google servers.
+   */
+  private static final String LOAD_DOC_ACTION = "load";
+
+  /**
    * Logger for logging.
    */
   private static final Logger logger = 
@@ -78,11 +83,11 @@ public class EntryPoint extends WebappServletPluginExtension {
   public void doPut(HttpServletRequest httpRequest,
       HttpServletResponse httpResponse) throws ServletException, IOException {
 
-    String client_id = (String) getServletConfig().getServletContext().getAttribute("gdrive.client.id");
+    String clientId = (String) getServletConfig().getServletContext().getAttribute("gdrive.client.id");
     
-    if (client_id != null) {
+    if (clientId != null) {
       httpResponse.setStatus(HttpServletResponse.SC_OK);
-      httpResponse.getWriter().write(client_id);
+      httpResponse.getWriter().write(clientId);
       httpResponse.getWriter().flush();  
     } else {
       httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -118,6 +123,7 @@ public class EntryPoint extends WebappServletPluginExtension {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
 	  String stateJson = httpRequest.getParameter("state");
     logger.debug("Request with state: " + stateJson);
@@ -151,7 +157,10 @@ public class EntryPoint extends WebappServletPluginExtension {
       logger.debug("Requesting user data for user: " + userId);
       
       String filePath = null;
-      if (CREATE_ACTION.equals(state.action)) {
+      if (LOAD_DOC_ACTION.equals(state.action)) {
+        String docUrl = state.ids.iterator().next();
+        openUrlInWebapp(httpResponse, docUrl, userData.getUserName());
+      } else if (CREATE_ACTION.equals(state.action)) {
         String urlParam = httpRequest.getParameter("url");
         if (urlParam != null) {
           // The user has already chosen the template, create it in the
@@ -231,16 +240,29 @@ public class EntryPoint extends WebappServletPluginExtension {
 	 * @param filePath The path of the file in the user's drive.
 	 * @param userName The name of the author.
 	 * 
-	 * @throws UnsupportedEncodingException
 	 * @throws IOException
 	 */
-  private void openInWebapp(HttpServletResponse httpResponse, String userId, String filePath, String userName) throws UnsupportedEncodingException, IOException {
+  private void openInWebapp(HttpServletResponse httpResponse, String userId, String filePath, String userName) throws IOException {
     String fileUrl = "gdrive:///" + userId + filePath;
     logger.debug("Opening url: " + fileUrl);
     String encodedFileUrl = encodeUrlComponent(fileUrl);
     String encodedUserName = encodeUrlComponent(userName);
     httpResponse.sendRedirect("../app/oxygen.html?url=" + encodedFileUrl +
         "&author=" + encodedUserName);
+  }
+  
+  /**
+   * Redirect the user to open the specified url in the Web Author.
+   * 
+   * @param httpResponse The response to sent to the user.
+   * @param url The URL to open in Web Author. 
+   * @param userName The name of the author.
+   * 
+   * @throws IOException
+   */
+  private void openUrlInWebapp(HttpServletResponse httpResponse, String url, String userName) throws IOException {
+    httpResponse.sendRedirect("../app/oxygen.html?url=" + encodeUrlComponent(url) +
+        "&author=" + encodeUrlComponent(userName));
   }
 
   /**

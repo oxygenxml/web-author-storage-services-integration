@@ -58,7 +58,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
    * code running in thread pools it is null.
    */
   private static final ThreadLocal<UserData> currentUserData = 
-      new ThreadLocal<UserData>();
+      new ThreadLocal<>();
 
   /**
    * Db to store the crendentials.
@@ -126,6 +126,11 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
       throws IOException, AuthorizationRequiredException {
     try {
       UserData userData = getCurrentUserData(userId);
+      
+      if (userData == null) {
+        throw new AuthorizationRequiredException();
+      }
+      
       return operation.executeOperation(userData.getDrive());
     } catch (IOException e) {
       int statusCode = getStatusCodeFromException(e);
@@ -248,8 +253,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
 	/**
 	 * @see Filter#destroy()
 	 */
-	public void destroy() {
-	}
+	public void destroy() {/**/}
 
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
