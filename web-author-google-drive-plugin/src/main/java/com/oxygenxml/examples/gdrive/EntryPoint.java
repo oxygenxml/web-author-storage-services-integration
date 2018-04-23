@@ -121,7 +121,8 @@ public class EntryPoint extends WebappServletPluginExtension {
 	public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
 	  String stateJson = httpRequest.getParameter("state");
     logger.debug("Request with state: " + stateJson);
-    String encodedStateJson = URLUtil.encodeURIComponent(stateJson);
+    String encodedStateJson = stateJson != null ? 
+        URLUtil.encodeURIComponent(stateJson) : null;
     
     String userId = AuthCode.getUserId(httpRequest);
     logger.debug("Checking user " + userId + " for authorization");
