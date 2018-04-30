@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<third-party>
+    <component id="com.google.oauth-client:google-oauth-client:1.18.0-rc" draft="false" product="webapp">
+        <name>Google OAuth Client Library for Java</name>
+        <version>1.18.0-rc</version>
+        <project-info>
+            <about>Google OAuth Client Library for Java. Functionality that works on all supported Java platforms,
+    including Java 5 (or higher) desktop (SE) and web (EE), Android, and Google App Engine.</about>
+            <licensor>Google</licensor>
+            <start-year>2011</start-year>
+            <project-url>http://code.google.com/p/google-oauth-java-client/google-oauth-client/</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.apis:google-api-services-drive:v2-rev128-1.18.0-rc" draft="false" product="webapp">
+        <name>Drive API v2-rev128-1.18.0-rc</name>
+        <version>v2-rev128-1.18.0-rc</version>
+        <project-info>
+            <about>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/</about>
+            <licensor>Google</licensor>
+            <start-year>2011</start-year>
+            <project-url>http://nexus.sonatype.org/oss-repository-hosting.html/google-api-services-drive</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.api-client:google-api-client:1.18.0-rc" draft="false" product="webapp">
+        <name>Google APIs Client Library for Java</name>
+        <version>1.18.0-rc</version>
+        <project-info>
+            <about>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/</about>
+            <licensor>Google</licensor>
+            <start-year>2010</start-year>
+            <project-url>http://code.google.com/p/google-api-java-client/google-api-client/</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.code.gson:gson:2.2.4" draft="false" product="webapp">
+        <name>Gson</name>
+        <version>2.2.4</version>
+        <project-info>
+            <about>Google Gson library</about>
+            <licensor>Google, Inc.</licensor>
+            <start-year>2008</start-year>
+            <project-url>http://code.google.com/p/google-gson/</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.http-client:google-http-client-jackson2:1.18.0-rc" draft="false" product="webapp">
+        <name>Jackson 2 extensions to the Google HTTP Client Library for Java.</name>
+        <version>1.18.0-rc</version>
+        <project-info>
+            <about>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/</about>
+            <licensor>Google</licensor>
+            <start-year>2011</start-year>
+            <project-url>http://code.google.com/p/google-http-java-client/google-http-client-jackson2/</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.fasterxml.jackson.core:jackson-core:2.1.3" draft="false" product="webapp">
+        <name>Jackson-core</name>
+        <version>2.1.3</version>
+        <project-info>
+            <about>Core Jackson abstractions, basic JSON streaming API implementation</about>
+            <licensor>FasterXML</licensor>
+            <start-year>2012</start-year>
+            <project-url>http://wiki.fasterxml.com/JacksonHome</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>Copyright [yyyy] [name of copyright owner]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.http-client:google-http-client:1.18.0-rc" draft="false" product="webapp">
+        <name>Google HTTP Client Library for Java</name>
+        <version>1.18.0-rc</version>
+        <project-info>
+            <about>Google HTTP Client Library for Java. Functionality that works on all supported Java platforms,
+    including Java 5 (or higher) desktop (SE) and web (EE), Android, and Google App Engine.</about>
+            <licensor>Google</licensor>
+            <start-year>2011</start-year>
+            <project-url>http://code.google.com/p/google-http-java-client/google-http-client/</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.code.findbugs:jsr305:1.3.9" draft="false" product="webapp">
+        <name>FindBugs-jsr305</name>
+        <version>1.3.9</version>
+        <project-info>
+            <about>JSR305 Annotations for Findbugs</about>
+            <licensor></licensor>
+            <start-year></start-year>
+            <project-url>http://findbugs.sourceforge.net/</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+    <component id="com.google.apis:google-api-services-plus:v1-rev128-1.18.0-rc" draft="false" product="webapp">
+        <name>Google+ API v1-rev128-1.18.0-rc</name>
+        <version>v1-rev128-1.18.0-rc</version>
+        <project-info>
+            <about>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/</about>
+            <licensor>Google</licensor>
+            <start-year>2011</start-year>
+            <project-url>http://nexus.sonatype.org/oss-repository-hosting.html/google-api-services-plus</project-url>
+        </project-info>
+        <license>
+            <type>The Apache Software License, Version 2.0</type>
+            <content>   Copyright {yyyy} {name of copyright owner}
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</content>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </component>
+</third-party>
