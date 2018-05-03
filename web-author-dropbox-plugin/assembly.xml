@@ -14,12 +14,10 @@
 		<file>
 			<source>license.txt</source>
 			<outputDirectory>/</outputDirectory>
-			<filtered>true</filtered>
 		</file>
 		<file>
 			<source>third-party-components.xml</source>
 			<outputDirectory>/</outputDirectory>
-			<filtered>true</filtered>
 		</file>
 		<file>
 			<source>plugin.xml</source>
