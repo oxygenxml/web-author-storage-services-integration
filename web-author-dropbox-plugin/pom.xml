@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.oxygenxml.samples</groupId>
     <artifactId>web-author-storage-services-plugin</artifactId>
-    <version>20.1-SNAPSHOT</version>
+    <version>21.0-SNAPSHOT</version>
   </parent>
   <artifactId>web-author-dropbox-plugin</artifactId>
   <name>Web Author Dropbox Plugin</name>
   <description>A plugin for oXygen XML Web Author to allow editing files on Dropbox</description>
 
   <properties>    
-      <oxygen.version>20.1-SNAPSHOT</oxygen.version>
+      <oxygen.version>21.0-SNAPSHOT</oxygen.version>
       <sonar.sources>src/main/java,web</sonar.sources>
   </properties>
     
