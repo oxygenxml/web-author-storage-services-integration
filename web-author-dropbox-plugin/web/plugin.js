@@ -6,13 +6,13 @@
 
   var protoPrefix = null;
   var useDbxProtocol = false;
-  if(url.indexOf("dbx:///") == 0) {
+  if(url.indexOf("dbx:///") === 0) {
     protoPrefix= "dbx:///";
     useDbxProtocol = true;
-  } else if(url.indexOf("dbx://") == 0) {
+  } else if(url.indexOf("dbx://") === 0) {
     protoPrefix= "dbx://";
     useDbxProtocol = true;
-  } else if(url.indexOf("dbx:/") == 0) {
+  } else if(url.indexOf("dbx:/") === 0) {
     protoPrefix= "dbx:/";
     useDbxProtocol = true;
   }
@@ -38,7 +38,7 @@
      *
      * @constructor
      */
-    DropboxUrlChooser = function() {
+    var DropboxUrlChooser = function() {
       sync.api.UrlChooser.call(this);
     };
     goog.inherits(DropboxUrlChooser, sync.api.UrlChooser);
@@ -61,9 +61,9 @@
     DropboxUrlChooser.prototype.chooseUrl = function(context, chosen, purpose) {
       var supportedExtensions = null;
       // set the correct extensions depending on the context type.
-      if(context.getType() == sync.api.UrlChooser.Type.IMAGE) {
+      if(context.getType() === sync.api.UrlChooser.Type.IMAGE) {
         supportedExtensions = ['.bmp', '.cr2', '.gif', '.ico', '.ithmb', '.jpeg', '.jpg', '.nef', '.png', '.raw', '.svg', '.tif', '.tiff', '.wbmp', '.webp'];
-      } else if(context.getType() == sync.api.UrlChooser.Type.GENERIC) {
+      } else if(context.getType() === sync.api.UrlChooser.Type.GENERIC) {
         supportedExtensions = ['.xml', '.dita', '.ditamap', '.ditaval', '.mathml'];
       }
 
@@ -82,11 +82,9 @@
           } else {
             // if we do not have the user id we open the file ourselves and request authorization.
             chosen(null);
-            // open the chosen file in a new tab.
-            var href = "../plugins-dispatcher/dbx-start?path=" + encodeURIComponent(path);
             // we open the dropbox file in the same tab in order to prevent it to be
             // considered a pop-up and blocked.
-            window.location.href = href;
+            window.location.href = "../plugins-dispatcher/dbx-start?path=" + encodeURIComponent(path);
           }
         },
 
@@ -122,8 +120,7 @@
           url: fileURL,
           type: 'GET',
           async: false,
-          success: goog.bind(function(result){
-            var responseText = result;
+          success: goog.bind(function(responseText){
             var encodedContent = sync.util.encodeB64(responseText);
             fileURL = 'data:text/xml;base64,' + encodedContent;
             Dropbox.save(fileURL, fileName, options);
@@ -145,7 +142,7 @@
      */
     DropboxUrlChooser.prototype.supports = function(type) {
       var supports = false;
-      if(type == sync.api.UrlChooser.Type.IMAGE) {
+      if(type === sync.api.UrlChooser.Type.IMAGE || type === sync.api.UrlChooser.Type.EXTERNAL_REF) {
         supports = true;
       }
       return supports;
@@ -155,6 +152,14 @@
     // if the current opened file is from dropbox use the Dropbox url chooser.
     if(useDbxProtocol) {
       workspace.setUrlChooser(urlChooser);
+
+      // Remove insert new topic ref action from the toolbar.
+      var actionId = 'insert.new.topic';
+      goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
+        goog.events.listen(e.editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function() {
+          e.editor.getActionsManager().unregisterAction(actionId);
+        });
+      });
     }
 
     // register a create action for the url chooser.
@@ -183,6 +188,6 @@
 
     workspace.getActionsManager().registerOpenAction(
         openAction);
-  };
+  }
 
 })();
