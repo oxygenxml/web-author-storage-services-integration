@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.oxygenxml</groupId>
     <artifactId>oxygen-plugins-superpom</artifactId>
-    <version>21.0-SNAPSHOT</version>
+    <version>20.1.1-SNAPSHOT</version>
   </parent>
   <packaging>pom</packaging>
   <groupId>com.oxygenxml.samples</groupId>

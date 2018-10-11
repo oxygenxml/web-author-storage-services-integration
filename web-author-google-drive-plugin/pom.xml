@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.oxygenxml.samples</groupId>
     <artifactId>web-author-storage-services-plugin</artifactId>
-    <version>21.0-SNAPSHOT</version>
+    <version>20.1.1-SNAPSHOT</version>
   </parent>
   <artifactId>web-author-google-drive-plugin</artifactId>
   <name>Web Author Google Drive Plugin</name>
@@ -14,7 +14,7 @@
 	
     <properties>    
         <!-- This version should be changed to a released one when switching to a release branch -->
-        <oxygen.version>21.0-SNAPSHOT</oxygen.version>
+        <oxygen.version>20.1.1-SNAPSHOT</oxygen.version>
         <sonar.sources>src/main/java,web</sonar.sources>
     </properties>
     
