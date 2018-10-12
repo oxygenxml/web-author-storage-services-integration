@@ -1,4 +1,4 @@
-oXygen WebApp storage services integration
+Oxygen WebApp storage services integration
 ==========================================
 
 This project is an integration of the oXygen Web Author with two of the most popular online file storage services: Google Drive and Dropbox.
