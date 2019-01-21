@@ -11,10 +11,10 @@ import com.google.gson.annotations.SerializedName;
 public class UserInfoJson {
 
   @SerializedName("sub")
-  public String id;
+  private String id;
   
   @SerializedName("name")
-  public String name;
+  private String name;
 
   /**
    * @return the userId
