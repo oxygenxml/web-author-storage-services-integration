@@ -19,7 +19,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.plus.Plus;
 
 
 /**
@@ -158,19 +157,6 @@ public class Credentials {
    */
   public Drive newDrive(GoogleCredential credential) {
     return new Drive.Builder(httpTransport, jsonFactory, credential)
-      .setApplicationName(APPLICATION_NAME)
-      .build();
-  }
-  
-  /**
-   * Returns a new Google Plus client.
-   * 
-   * @param credential The credential of the user.
-   * 
-   * @return The client instance.
-   */  
-  public Plus newPlus(GoogleCredential credential) {
-    return new Plus.Builder(httpTransport, jsonFactory, credential)
       .setApplicationName(APPLICATION_NAME)
       .build();
   }
