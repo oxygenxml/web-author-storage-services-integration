@@ -2,6 +2,8 @@ var loadGDriveAuthApi = null;
 
 (function () {
 
+  var tabName = 'Google Drive';
+
   /**
    * A implementation class for URL choosers for google drive
    *
@@ -391,8 +393,8 @@ var loadGDriveAuthApi = null;
       openAction.setActionId('gdrive-open-action');
 
       // set the action names.
-      createAction.setActionName('Google Drive');
-      openAction.setActionName('Google Drive');
+      createAction.setActionName(tabName);
+      openAction.setActionName(tabName);
 
       // override the perform action method to open a file from drive.
       openAction.actionPerformed = goog.bind(function () {
@@ -438,5 +440,12 @@ var loadGDriveAuthApi = null;
     goog.events.listenOnce(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
       editorLoaded = true;
     });
+
+    // Focus the Google Drive tab if the 'gdrive-focus' parameter is provided.
+    if (sync.util.getURLParameter('gdrive-focus') === 'true') {
+      goog.events.listenOnce(workspace, sync.api.Workspace.EventType.BEFORE_DASHBOARD_LOADED, function(e) {
+        e.options.selectedTabName = tabName;
+      });
+    }
   }
 })();
