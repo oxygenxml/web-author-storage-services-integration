@@ -148,9 +148,8 @@ public class EntryPoint extends WebappServletPluginExtension {
       if (stateJson != null) {
         redirectUri = httpRequest.getRequestURI() + "?state=" + encodedStateJson;
       } else {
-        // User landed on this page and our app is authorized, teach the user
-        // how to use the Google drive app. 
-        redirectUri = "../gdrive/gdrive.html";
+        // User landed on this page and our app is authorized, redirect to dashboard. 
+        redirectUri = "../app/oxygen.html?gdrive-focus=true";
       }
       sendAuthorizationRequest(httpResponse, redirectUri);
     } else {
