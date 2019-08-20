@@ -173,7 +173,7 @@
     // set custom icons for the open and create action.
     var largeIcon = '../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
     createAction.setLargeIcon(largeIcon);
-    openAction.setLargeIcon('../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png');
+    openAction.setLargeIcon(largeIcon);
 
     // set the actions ids
     createAction.setActionId('dbx-create-action');
