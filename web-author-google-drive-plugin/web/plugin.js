@@ -76,7 +76,6 @@ var loadGDriveAuthApi = null;
           goog.bind(function(callback, data) {
             if(data.action === 'picked') {
               var fileId = data.docs[0].id;
-              chosen(null);
               this.openFileById(fileId);
             }
           }, this, chosen));
