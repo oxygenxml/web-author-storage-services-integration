@@ -64,7 +64,7 @@
       if(context.getType() === sync.api.UrlChooser.Type.IMAGE) {
         supportedExtensions = ['.bmp', '.cr2', '.gif', '.ico', '.ithmb', '.jpeg', '.jpg', '.nef', '.png', '.raw', '.svg', '.tif', '.tiff', '.wbmp', '.webp'];
       } else if(context.getType() === sync.api.UrlChooser.Type.GENERIC) {
-        supportedExtensions = ['.xml', '.dita', '.ditamap', '.ditaval', '.mathml'];
+        supportedExtensions = ['.xml', '.dita', '.ditamap', '.ditaval', '.mathml', '.md'];
       }
 
       var options = {
