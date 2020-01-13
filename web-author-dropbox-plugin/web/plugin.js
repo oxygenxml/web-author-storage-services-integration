@@ -84,7 +84,7 @@
             chosen(null);
             // we open the dropbox file in the same tab in order to prevent it to be
             // considered a pop-up and blocked.
-            window.location.href = "../plugins-dispatcher/dbx-start?path=" + encodeURIComponent(path);
+            window.location.href = "../plugins-dispatcher/dbx-start?path=" + encodeURIComponent(encodeURIComponent(path));
           }
         },
 
