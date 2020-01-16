@@ -2,6 +2,7 @@ package com.oxygenxml.examples.gdrive;
 
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProvider;
+import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
 public class GDriveWorkspaceAccess implements WorkspaceAccessPluginExtension {
@@ -9,7 +10,7 @@ public class GDriveWorkspaceAccess implements WorkspaceAccessPluginExtension {
   @Override
   public void applicationStarted(StandalonePluginWorkspace pluginWorkspace) {
     ((StandalonePluginWorkspace) pluginWorkspace).addTrustedHostsProvider(
-      new TrustedHostsProvider() {
+      new TrustedHostsProvider(null) {
         @Override
         public Response isTrusted(String hostName) {
           if ("accounts.google:443".equals(hostName) || "googleapis:443".equals(hostName)) {
