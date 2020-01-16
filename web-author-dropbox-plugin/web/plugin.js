@@ -64,7 +64,7 @@
       if(context.getType() === sync.api.UrlChooser.Type.IMAGE) {
         supportedExtensions = ['.bmp', '.cr2', '.gif', '.ico', '.ithmb', '.jpeg', '.jpg', '.nef', '.png', '.raw', '.svg', '.tif', '.tiff', '.wbmp', '.webp'];
       } else if(context.getType() === sync.api.UrlChooser.Type.GENERIC) {
-        supportedExtensions = ['.xml', '.dita', '.ditamap', '.ditaval', '.mathml'];
+        supportedExtensions = ['.xml', '.dita', '.ditamap', '.ditaval', '.mathml', 'xhtml'];
       }
 
       var options = {
@@ -114,21 +114,9 @@
           console.log('An error occurred :' + errorMessage);
         }
       };
-      // dropbox server cannot access this url so we convert it to a data: url.
-      if (!opt_externalAccess) {
-        $.ajax({
-          url: fileURL,
-          type: 'GET',
-          async: false,
-          success: goog.bind(function(responseText){
-            var encodedContent = sync.util.encodeB64(responseText);
-            fileURL = 'data:text/xml;base64,' + encodedContent;
-            Dropbox.save(fileURL, fileName, options);
-          }, this)
-        });
-      } else {
-        Dropbox.save(fileURL, fileName, options);
-      }
+      var deployedVersion = 'v21.1.1.0';
+      fileURL = fileURL.replace(new RegExp('https://staging-webapp.sync.ro/oxygen-xml-web-author/rest/[^/]+/', 'https://www.oxygenxml.com/oxygen-xml-web-author/rest/' + deployedVersion + '/');
+      Dropbox.save(fileURL, fileName, options);
     };
 
     /**
@@ -162,32 +150,22 @@
       });
     }
 
-    // register a create action for the url chooser.
-    var createAction = new sync.api.CreateDocumentAction(urlChooser);
     var openAction = new sync.actions.OpenAction(urlChooser);
-
-    // set the the actions descriptions.
-    createAction.setDescription('Save a template document in your Dropbox');
     openAction.setDescription('Open a document from your Dropbox');
-
-    // set custom icons for the open and create action.
-    var largeIcon = '../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
-    createAction.setLargeIcon(largeIcon);
     openAction.setLargeIcon('../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png');
-
-    // set the actions ids
-    createAction.setActionId('dbx-create-action');
     openAction.setActionId('dbx-open-action');
-    
-    // set the action names.
-    createAction.setActionName('Dropbox');
     openAction.setActionName('Dropbox');
-
-    workspace.getActionsManager().registerCreateAction(
-        createAction);
-
     workspace.getActionsManager().registerOpenAction(
         openAction);
+
+    var createAction = new sync.api.CreateDocumentAction(urlChooser);
+    createAction.setDescription('Save a template document in your Dropbox');
+    var largeIcon = '../plugin-resources/dbx/Dropbox70' + (sync.util.getHdpiFactor() > 1 ? '@2x' : '') + '.png';
+    createAction.setLargeIcon(largeIcon);
+    createAction.setActionId('dbx-create-action');
+    createAction.setActionName('Dropbox');
+    workspace.getActionsManager().registerCreateAction(
+        createAction);
   }
 
 })();

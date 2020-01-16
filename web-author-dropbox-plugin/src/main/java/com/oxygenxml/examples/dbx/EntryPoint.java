@@ -1,9 +1,6 @@
 package com.oxygenxml.examples.dbx;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,8 +11,8 @@ import org.apache.log4j.Logger;
 
 import com.dropbox.core.DbxWebAuth;
 
-import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 import ro.sync.basic.util.URLUtil;
+import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 
 /**
  * Entry point for our app from the Google Drive UI.
@@ -32,6 +29,7 @@ public class EntryPoint extends WebappServletPluginExtension {
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
    *      response)
    */
+  @Override
   public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
     String userId = AuthCode.getUserId(httpRequest);
     logger.debug("User id: " + userId);
@@ -41,15 +39,15 @@ public class EntryPoint extends WebappServletPluginExtension {
     String path = httpRequest.getParameter("path");
     if (userData != null && path != null) {
       logger.debug("User requested path: " + path);
-      String dbxUrl = "dbx:///" + userId + URLDecoder.decode(path, "UTF-8");
+      String dbxUrl = "dbx:///" + userId + path;
       logger.debug("dbx url: " + path);
-      httpResponse.sendRedirect("../app/oxygen.html?url=" + encodeUrl(dbxUrl) + 
+      httpResponse.sendRedirect("../app/oxygen.html?url=" + URLUtil.encodeURIComponent(dbxUrl) + 
           "&author=" + URLUtil.encodeURIComponent(userData.getUserName()));
     } else if (path != null) {
       // User authorization required.
       logger.debug("Starting authorizattion");
       DbxWebAuth flow = Credentials.getFlow();
-      String encodedPath = encodeUrl(path);
+      String encodedPath = URLUtil.encodeURIComponent(path);
       // The URL to redirect the user to after authorization.
       String nextUrl = httpRequest.getRequestURL()
           .append("?path=").append(encodedPath).toString();
@@ -71,19 +69,6 @@ public class EntryPoint extends WebappServletPluginExtension {
       // User came here for the home page.
       httpResponse.sendRedirect("index.jsp");
     }
-  }
-  
-  /**
-   * Encode a Url.
-   * 
-   * @param dbxUrl The url.
-   * 
-   * @return The encoded url.
-   *
-   * @throws UnsupportedEncodingException
-   */
-  private String encodeUrl(String dbxUrl) throws UnsupportedEncodingException {
-    return URLEncoder.encode(dbxUrl, "UTF-8").replace("+", "%20");
   }
 
   @Override
