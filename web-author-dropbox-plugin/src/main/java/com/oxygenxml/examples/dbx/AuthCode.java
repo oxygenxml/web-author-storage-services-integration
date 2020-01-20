@@ -106,11 +106,8 @@ public class AuthCode extends WebappServletPluginExtension {
       setUserId(request, authFinish.getUserId());
       logger.debug("Set user id : " + authFinish.getUserId());
     } catch (DbxException ex) {
+      logger.warn(ex, ex);
       DbxManagerFilter.authorizationFailedForUser(authFinish.getUserId());
-      // Normally should not happen. We just got the token, so it is supposed to work.
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-          "Error communicating with Dropbox.");
-      logger.error(ex, ex);
     }
     
     logger.debug("Redirecting to " + authFinish.getUrlState());

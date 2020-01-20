@@ -87,10 +87,10 @@ public class DbxUrlConnection extends HttpURLConnection {
           currentUserData.getClient().files().download(path).download(target);
           responseCode = 200; 
         } catch (DbxException e) {
-          logger.debug(e, e);
+          logger.warn(e, e);
           exceptionWhileConnecting(e); 
         } catch (IOException e) {
-          logger.debug(e, e);
+          logger.warn(e, e);
           exceptionWhileConnecting(e); 
         }
         downloadedBytes = target.toByteArray();
@@ -212,7 +212,7 @@ public class DbxUrlConnection extends HttpURLConnection {
             .start()
             .uploadAndFinish(new ByteArrayInputStream(bytesToUpload));
         } catch (DbxException e) {
-          logger.debug(e, e);
+          logger.warn(e, e);
           DbxManagerFilter.authorizationFailedForUser(userId);
         }
         logger.debug("done.");
