@@ -31,7 +31,12 @@ import ro.sync.exml.workspace.api.options.WSOptionsStorage;
  * which is the user on behalf of which we are making the request.
  */
 public class DbxManagerFilter implements Filter, PluginExtension {
-  
+
+  /**
+   * The key of the option that holds the secrets.
+   */
+  static final String DBX_SECRETS_OPTIONS_KEY = "dbx.secrets";
+
   /**
    * Key used to store user data in session store.
    */
@@ -232,7 +237,7 @@ public class DbxManagerFilter implements Filter, PluginExtension {
 			throw new ServletException("Could not create token DB.", e);
 		}
 
-    String secrets = optionsStorage.getOption("dbx.secrets", null);
+    String secrets = optionsStorage.getOption(DBX_SECRETS_OPTIONS_KEY, null);
     if (secrets == null) {
       logger.error("gdrive.secrets option not found.");
     }
