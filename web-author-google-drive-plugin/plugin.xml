@@ -30,6 +30,6 @@
   class="com.oxygenxml.examples.gdrive.AuthCode"/>
  <extension type="WebappServletFilter" 
   class="com.oxygenxml.examples.gdrive.GDriveManagerFilter"/>
- <extension type="WorkspaceAccess"
-  class="com.oxygenxml.examples.gdrive.GDriveWorkspaceAccess"/>
+ <extension type="TrustedHosts"
+  class="com.oxygenxml.examples.gdrive.TrustedHostsProvider"/>
 </plugin>
