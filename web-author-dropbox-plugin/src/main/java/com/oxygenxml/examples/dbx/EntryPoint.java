@@ -41,7 +41,8 @@ public class EntryPoint extends WebappServletPluginExtension {
       logger.debug("User requested path: " + path);
       String dbxUrl = "dbx:///" + userId + path;
       logger.debug("dbx url: " + path);
-      httpResponse.sendRedirect("../app/oxygen.html?url=" + URLUtil.encodeURIComponent(dbxUrl) + 
+      // Sonar false positive - the redirect is to oxygen.html
+      httpResponse.sendRedirect("../app/oxygen.html?url=" + URLUtil.encodeURIComponent(dbxUrl) + // NOSONAR 
           "&author=" + URLUtil.encodeURIComponent(userData.getUserName()));
     } else if (path != null) {
       // User authorization required.
