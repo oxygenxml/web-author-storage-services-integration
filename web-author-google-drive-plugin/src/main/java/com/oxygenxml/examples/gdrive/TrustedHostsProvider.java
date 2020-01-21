@@ -47,7 +47,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
     
     String password = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY, null);
     String secrets = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY, null);
-    if (password != null && !password.isEmpty() && secrets != null && secrets.isEmpty()) {
+    if (password != null && !password.isEmpty() && secrets != null && !secrets.isEmpty()) {
       toSet = new HashSet<>(
           Arrays.asList(
               "accounts.google.com:443", 
