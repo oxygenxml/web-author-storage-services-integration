@@ -36,22 +36,21 @@ public class EntryPoint extends WebappServletPluginExtension {
     UserData userData = DbxManagerFilter.getCurrentUserData(userId);
     logger.debug("user data: " + userData);
     
-    String path = httpRequest.getParameter("path");
-    if (userData != null && path != null) {
-      logger.debug("User requested path: " + path);
-      String dbxUrl = "dbx:///" + userId + path;
-      logger.debug("dbx url: " + path);
+    String encodedPath = httpRequest.getParameter("path");
+    if (userData != null && encodedPath != null) {
+      logger.debug("User requested path: " + encodedPath);
+      String dbxUrl = "dbx:///" + userId + URLUtil.decodeURIComponent(encodedPath);
+      logger.debug("dbx url: " + dbxUrl);
       // Sonar false positive - the redirect is to oxygen.html
       httpResponse.sendRedirect("../app/oxygen.html?url=" + URLUtil.encodeURIComponent(dbxUrl) + // NOSONAR 
           "&author=" + URLUtil.encodeURIComponent(userData.getUserName()));
-    } else if (path != null) {
+    } else if (encodedPath != null) {
       // User authorization required.
       logger.debug("Starting authorizattion");
       DbxWebAuth flow = Credentials.getFlow();
-      String encodedPath = URLUtil.encodeURIComponent(path);
       // The URL to redirect the user to after authorization.
       String nextUrl = httpRequest.getRequestURL()
-          .append("?path=").append(encodedPath).toString();
+          .append("?path=").append(URLUtil.encodeURIComponent(encodedPath)).toString();
       logger.debug("Next url: " + nextUrl);
       
       DbxWebAuth.Request authRequest = DbxWebAuth.newRequestBuilder()

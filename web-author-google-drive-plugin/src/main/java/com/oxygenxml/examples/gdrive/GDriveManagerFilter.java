@@ -39,6 +39,16 @@ import ro.sync.net.protocol.http.HttpExceptionWithDetails;
 public class GDriveManagerFilter implements Filter, PluginExtension {
   
   /**
+   * The password option key.
+   */
+  static final String GDRIVE_PASSWORD_OPTION_KEY = "gdrive.password";
+  /**
+   * The secrets option key.
+   */
+  static final String GDRIVE_SECRETS_OPTION_KEY = "gdrive.secrets";
+
+
+  /**
    * Key used to store google drive session information on the session store.
    */
   private static final String G_DRIVE_SESSIONS_KEY = "g-drive.sessions";
@@ -300,7 +310,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
 
     ServletContext servletContext = fConfig.getServletContext();
 
-    String passwordToEncryptWith = optionsStorage.getOption("gdrive.password", null);
+    String passwordToEncryptWith = optionsStorage.getOption(GDRIVE_PASSWORD_OPTION_KEY, null);
     if (passwordToEncryptWith == null) {
       logger.error("gdrive.password option not found.");
     }
@@ -315,7 +325,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
       throw new ServletException("Could not create token DB.", e);
     }
 
-    String secrets = optionsStorage.getOption("gdrive.secrets", null);
+    String secrets = optionsStorage.getOption(GDRIVE_SECRETS_OPTION_KEY, null);
     if (secrets == null) {
       logger.error("gdrive.secrets option not found.");
     }

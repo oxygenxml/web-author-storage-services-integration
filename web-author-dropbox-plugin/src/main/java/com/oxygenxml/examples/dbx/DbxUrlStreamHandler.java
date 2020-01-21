@@ -32,7 +32,7 @@ public class DbxUrlStreamHandler extends URLStreamHandler {
     String userId = getUserIdFromUrl(url);
     UserData currentUserData = DbxManagerFilter.getCurrentUserData(userId);
     
-    logger.debug("Opening URL " + url + " for user with drive " + currentUserData + " on thread " + Thread.currentThread().getId());    
+    logger.debug("Opening URL " + url + " for user with dropbox " + currentUserData + " on thread " + Thread.currentThread().getId());
     if (currentUserData == null) {
       DbxManagerFilter.authorizationFailedForUser(userId);
     }

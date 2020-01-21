@@ -29,4 +29,6 @@
   class="com.oxygenxml.examples.dbx.AuthCode"/>
  <extension type="WebappServletFilter" 
   class="com.oxygenxml.examples.dbx.DbxManagerFilter"/>
+ <extension type="TrustedHosts"
+  class="com.oxygenxml.examples.dbx.TrustedHostsProvider"/>
 </plugin>

@@ -1,6 +1,5 @@
-package com.oxygenxml.examples.gdrive;
+package com.oxygenxml.examples.dbx;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,9 +14,8 @@ import ro.sync.exml.workspace.api.options.WSOptionsStorage;
  * {@link TrustedHostsProviderExtension} implementation that trust imposed host.
  */
 public class TrustedHostsProvider implements TrustedHostsProviderExtension {
-
   /**
-   * Enforced host.
+   * Trusted host.
    */
   private Set<String> trustedHosts = null;
 
@@ -31,8 +29,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
     optionsStorage.addOptionListener(new WSOptionListener() {
       @Override
       public void optionValueChanged(WSOptionChangedEvent event) {
-        if (GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY.equals(event.getOptionKey())
-            || GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY.equals(event.getOptionKey())) {
+        if (DbxManagerFilter.DBX_SECRETS_OPTIONS_KEY.equals(event.getOptionKey())) {
           updateEnforcedHost(optionsStorage);
         }
       }
@@ -43,20 +40,15 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
    * Update the enforced host field.
    */
   private void updateEnforcedHost(WSOptionsStorage optionsStorage) {
-    Set<String> toSet = null;
-    
-    String password = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY, null);
-    String secrets = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY, null);
-    if (password != null && !password.isEmpty() && secrets != null && !secrets.isEmpty()) {
-      toSet = new HashSet<>(
-          Arrays.asList(
-              "accounts.google.com:443", 
-              "googleapis.com:443", 
-              "www.googleapis.com:443", 
-              "*.googleusercontent.com:443"));
-    }
+    this.trustedHosts = null;
 
-    this.trustedHosts = toSet;
+    String secretsOptionValue = optionsStorage.getOption(DbxManagerFilter.DBX_SECRETS_OPTIONS_KEY, null);
+    boolean isConfigured = secretsOptionValue != null && !secretsOptionValue.isEmpty();
+    if (isConfigured) {
+      trustedHosts = new HashSet<>();
+      trustedHosts.add("api.dropboxapi.com:443");
+      trustedHosts.add("content.dropboxapi.com:443");
+    }
   }
 
   @Override
