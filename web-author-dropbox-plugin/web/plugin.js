@@ -115,7 +115,8 @@
         }
       };
       var deployedVersion = 'v21.1.1.0';
-      fileURL = fileURL.replace(new RegExp('https://staging-webapp.sync.ro/oxygen-xml-web-author/rest/[^/]+/', 'https://www.oxygenxml.com/oxygen-xml-web-author/rest/' + deployedVersion + '/'));
+      fileURL = fileURL.replace(new RegExp('https://staging-webapp.sync.ro/oxygen-xml-web-author/rest/[^/]+/'),
+          'https://www.oxygenxml.com/oxygen-xml-web-author/rest/' + deployedVersion + '/');
       Dropbox.save(fileURL, fileName, options);
     };
 
