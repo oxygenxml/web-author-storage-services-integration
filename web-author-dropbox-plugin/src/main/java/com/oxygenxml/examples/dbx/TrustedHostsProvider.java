@@ -1,5 +1,8 @@
 package com.oxygenxml.examples.dbx;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProviderExtension;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -14,7 +17,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
   /**
    * Trusted host.
    */
-  private String trustedHost = null;
+  private Set<String> trustedHosts = null;
 
   /**
    * Constructor.
@@ -37,18 +40,20 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
    * Update the enforced host field.
    */
   private void updateEnforcedHost(WSOptionsStorage optionsStorage) {
-    this.trustedHost = null;
+    this.trustedHosts = null;
 
     String secretsOptionValue = optionsStorage.getOption(DbxManagerFilter.DBX_SECRETS_OPTIONS_KEY, null);
     boolean isConfigured = secretsOptionValue != null && !secretsOptionValue.isEmpty();
     if (isConfigured) {
-      trustedHost = "api.dropboxapi.com:443";
+      trustedHosts = new HashSet<>();
+      trustedHosts.add("api.dropboxapi.com:443");
+      trustedHosts.add("content.dropboxapi.com:443");
     }
   }
 
   @Override
   public Response isTrusted(String hostName) {
-    if (hostName.equals(trustedHost)) {
+    if (trustedHosts != null && trustedHosts.contains(hostName)) {
       return TrustedHostsProvider.TRUSTED;
     } else {
       return TrustedHostsProvider.UNKNOWN;
