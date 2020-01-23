@@ -417,7 +417,8 @@ var loadGDriveAuthApi = null;
      */
     var editorLoaded = false;
     goog.events.listenOnce(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
-      goog.events.listenOnce(e.editor, sync.api.Editor.EventTypes.CUSTOM_MESSAGE_RECEIVED, function(e) {
+      var editor = e.editor;
+      goog.events.listenOnce(editor, sync.api.Editor.EventTypes.CUSTOM_MESSAGE_RECEIVED, function(e) {
         /*
         * We only auto-login once before Editor load.
         * CUSTOM_MESSAGE_RECEIVED can be thrown during editing and we don't want to handle that possibility.
@@ -426,7 +427,7 @@ var loadGDriveAuthApi = null;
           e.preventDefault();
 
           var state = JSON.stringify({
-            ids : [sync.util.getApiParams().url],
+            ids : [editor.getUrl()],
             action: "load",
             userId: this.userId
           });
