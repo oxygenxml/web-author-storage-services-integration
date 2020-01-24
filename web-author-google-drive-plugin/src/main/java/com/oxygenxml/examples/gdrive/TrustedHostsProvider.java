@@ -17,10 +17,20 @@ import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 public class TrustedHostsProvider implements TrustedHostsProviderExtension {
 
   /**
-   * Enforced host.
+   * Safe host.
    */
-  private Set<String> trustedHosts = null;
-
+  private final Set<String> trustedHosts = new HashSet<>(
+      Arrays.asList(
+          "accounts.google.com:443", 
+          "googleapis.com:443", 
+          "www.googleapis.com:443"));
+  private String userContentHost = ".googleusercontent.com:443";
+  
+  /**
+   * If <code>true</code> the Google Drive plugin is configured.
+   */
+  private boolean isConfigured = false;
+  
   /**
    * Constructor.
    */
@@ -43,25 +53,18 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
    * Update the enforced host field.
    */
   private void updateEnforcedHost(WSOptionsStorage optionsStorage) {
-    Set<String> toSet = null;
-    
     String password = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY, null);
     String secrets = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY, null);
     if (password != null && !password.isEmpty() && secrets != null && !secrets.isEmpty()) {
-      toSet = new HashSet<>(
-          Arrays.asList(
-              "accounts.google.com:443", 
-              "googleapis.com:443", 
-              "www.googleapis.com:443", 
-              "*.googleusercontent.com:443"));
+      isConfigured = true;
+    } else {
+      isConfigured = false;
     }
-
-    this.trustedHosts = toSet;
   }
 
   @Override
   public Response isTrusted(String hostName) {
-    if (trustedHosts != null && trustedHosts.contains(hostName)) {
+    if (this.isConfigured && (trustedHosts.contains(hostName) || hostName.endsWith(userContentHost))) {
       return TrustedHostsProvider.TRUSTED;
     } else {
       return TrustedHostsProvider.UNKNOWN;
