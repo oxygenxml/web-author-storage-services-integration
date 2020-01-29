@@ -38,13 +38,16 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
     WSOptionsStorage optionsStorage = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage();
     updateEnforcedHost(optionsStorage);
 
-    optionsStorage.addOptionListener(new WSOptionListener() {
+    optionsStorage.addOptionListener(new WSOptionListener(GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY) {
       @Override
       public void optionValueChanged(WSOptionChangedEvent event) {
-        if (GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY.equals(event.getOptionKey())
-            || GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY.equals(event.getOptionKey())) {
-          updateEnforcedHost(optionsStorage);
-        }
+        updateEnforcedHost(optionsStorage);
+      }
+    });
+    optionsStorage.addOptionListener(new WSOptionListener(GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY) {
+      @Override
+      public void optionValueChanged(WSOptionChangedEvent event) {
+        updateEnforcedHost(optionsStorage);
       }
     });
   }
