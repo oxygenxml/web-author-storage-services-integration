@@ -26,12 +26,10 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
     WSOptionsStorage optionsStorage = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage();
     updateEnforcedHost(optionsStorage);
 
-    optionsStorage.addOptionListener(new WSOptionListener() {
+    optionsStorage.addOptionListener(new WSOptionListener(DbxManagerFilter.DBX_SECRETS_OPTIONS_KEY) {
       @Override
       public void optionValueChanged(WSOptionChangedEvent event) {
-        if (DbxManagerFilter.DBX_SECRETS_OPTIONS_KEY.equals(event.getOptionKey())) {
-          updateEnforcedHost(optionsStorage);
-        }
+        updateEnforcedHost(optionsStorage);
       }
     });
   }
