@@ -3,6 +3,7 @@ package com.oxygenxml.examples.gdrive;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProviderExtension;
@@ -29,7 +30,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
   /**
    * If <code>true</code> the Google Drive plugin is configured.
    */
-  private boolean isConfigured = false;
+  private AtomicBoolean isConfigured = new AtomicBoolean(false);
   
   /**
    * Constructor.
@@ -59,15 +60,15 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
     String password = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY, null);
     String secrets = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY, null);
     if (password != null && !password.isEmpty() && secrets != null && !secrets.isEmpty()) {
-      isConfigured = true;
+      isConfigured.set(true);
     } else {
-      isConfigured = false;
+      isConfigured.set(false);
     }
   }
 
   @Override
   public Response isTrusted(String hostName) {
-    if (this.isConfigured && (trustedHosts.contains(hostName) || hostName.endsWith(userContentHost))) {
+    if (this.isConfigured.get() && (trustedHosts.contains(hostName) || hostName.endsWith(userContentHost))) {
       return TrustedHostsProvider.TRUSTED;
     } else {
       return TrustedHostsProvider.UNKNOWN;
