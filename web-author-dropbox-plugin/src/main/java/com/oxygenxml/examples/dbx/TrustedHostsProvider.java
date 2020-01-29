@@ -2,6 +2,7 @@ package com.oxygenxml.examples.dbx;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProviderExtension;
@@ -17,7 +18,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
   /**
    * Trusted host.
    */
-  private Set<String> trustedHosts = null;
+  private AtomicReference<Set<String>> trustedHostsRef = new AtomicReference<>(null);
 
   /**
    * Constructor.
@@ -38,7 +39,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
    * Update the enforced host field.
    */
   private void updateEnforcedHost(WSOptionsStorage optionsStorage) {
-    this.trustedHosts = null;
+    HashSet<String> trustedHosts = null;
 
     String secretsOptionValue = optionsStorage.getOption(DbxManagerFilter.DBX_SECRETS_OPTIONS_KEY, null);
     boolean isConfigured = secretsOptionValue != null && !secretsOptionValue.isEmpty();
@@ -47,10 +48,13 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
       trustedHosts.add("api.dropboxapi.com:443");
       trustedHosts.add("content.dropboxapi.com:443");
     }
+
+    this.trustedHostsRef.set(trustedHosts);
   }
 
   @Override
   public Response isTrusted(String hostName) {
+    Set<String> trustedHosts = trustedHostsRef.get();
     if (trustedHosts != null && trustedHosts.contains(hostName)) {
       return TrustedHostsProvider.TRUSTED;
     } else {
