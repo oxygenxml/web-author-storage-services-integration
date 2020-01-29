@@ -55,7 +55,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
   /**
    * Update the enforced host field.
    */
-  private void updateEnforcedHost(WSOptionsStorage optionsStorage) {
+  private synchronized void updateEnforcedHost(WSOptionsStorage optionsStorage) {
     String password = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_PASSWORD_OPTION_KEY, null);
     String secrets = optionsStorage.getOption(GDriveManagerFilter.GDRIVE_SECRETS_OPTION_KEY, null);
     if (password != null && !password.isEmpty() && secrets != null && !secrets.isEmpty()) {
