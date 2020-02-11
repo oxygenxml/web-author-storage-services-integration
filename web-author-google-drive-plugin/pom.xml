@@ -6,16 +6,15 @@
   <parent>
     <groupId>com.oxygenxml.samples</groupId>
     <artifactId>web-author-storage-services-plugin</artifactId>
-    <version>22.0-SNAPSHOT</version>
+    <version>22.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>web-author-google-drive-plugin</artifactId>
   <name>Web Author Google Drive Plugin</name>
   <description>A plugin for oXygen XML Web Author to allow editing files on Google Drive</description>
 	
     <properties>    
-        <!-- This version should be changed to a released one when switching to a release branch -->
-        <oxygen.version>22.0-SNAPSHOT</oxygen.version>
-        <sonar.sources>src/main/java,web</sonar.sources>
+      <sonar.sources>src/main/java,web</sonar.sources>
     </properties>
     
 	<repositories>
