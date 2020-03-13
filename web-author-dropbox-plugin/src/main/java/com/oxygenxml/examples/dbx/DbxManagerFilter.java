@@ -16,7 +16,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dropbox.core.DbxException;
 
@@ -46,7 +47,7 @@ public class DbxManagerFilter implements Filter, PluginExtension {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(DbxManagerFilter.class.getName());
+      LogManager.getLogger(DbxManagerFilter.class.getName());
   
   /**
    * Attribute used to retrieve the Tomcat temporary directory.

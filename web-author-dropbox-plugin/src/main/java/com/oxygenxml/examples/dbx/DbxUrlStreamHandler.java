@@ -8,7 +8,8 @@ import java.net.URLDecoder;
 import java.net.URLStreamHandler;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * URL stream handler implementation backed by Google Drive.
@@ -20,7 +21,7 @@ public class DbxUrlStreamHandler extends URLStreamHandler {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(DbxUrlStreamHandler.class.getName());
+      LogManager.getLogger(DbxUrlStreamHandler.class.getName());
   
   /**
    * Opens a connection to the file specified by the given url.

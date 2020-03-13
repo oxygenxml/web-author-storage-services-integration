@@ -7,7 +7,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dropbox.core.DbxAppInfo;
 import com.dropbox.core.DbxRequestConfig;
@@ -23,7 +24,7 @@ public class Credentials {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(Credentials.class.getName());
+      LogManager.getLogger(Credentials.class.getName());
   
   /**
    * Default request config.

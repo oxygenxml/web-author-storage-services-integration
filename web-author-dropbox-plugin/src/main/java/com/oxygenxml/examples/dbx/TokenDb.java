@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A simple database backed by a properties file.
@@ -18,8 +19,7 @@ public class TokenDb {
   /**
    * Logger for logging.
    */
-  private static final Logger logger = Logger
-      .getLogger(TokenDb.class.getName());
+  private static final Logger logger = LogManager.getLogger(TokenDb.class.getName());
 
   /**
    * The backing file of the db.

@@ -2,7 +2,8 @@ package com.oxygenxml.examples.dbx;
 
 import java.net.URLStreamHandler;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
 
@@ -15,7 +16,7 @@ public class CustomProtocolURLHandlerExtension implements URLStreamHandlerPlugin
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(CustomProtocolURLHandlerExtension.class.getName());
+      LogManager.getLogger(CustomProtocolURLHandlerExtension.class.getName());
   
   /**
    * Constructor.

@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
@@ -27,7 +28,7 @@ public class AuthCode extends WebappServletPluginExtension {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(AuthCode.class.getName());
+      LogManager.getLogger(AuthCode.class.getName());
   
   /**
    * The session attribute key for holding the user id.

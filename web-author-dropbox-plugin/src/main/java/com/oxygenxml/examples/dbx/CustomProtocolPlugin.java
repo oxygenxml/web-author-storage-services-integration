@@ -4,7 +4,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ro.sync.exml.plugin.Plugin;
 import ro.sync.exml.plugin.PluginDescriptor;
@@ -18,7 +19,7 @@ public class CustomProtocolPlugin extends Plugin {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(CustomProtocolPlugin.class.getName());
+      LogManager.getLogger(CustomProtocolPlugin.class.getName());
   
   /**
    * Constructor.

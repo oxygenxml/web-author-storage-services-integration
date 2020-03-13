@@ -8,7 +8,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.InvalidAccessTokenException;
@@ -24,7 +25,7 @@ public class DbxUrlConnection extends HttpURLConnection {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(DbxUrlConnection.class.getName());
+      LogManager.getLogger(DbxUrlConnection.class.getName());
   
   
   /**
