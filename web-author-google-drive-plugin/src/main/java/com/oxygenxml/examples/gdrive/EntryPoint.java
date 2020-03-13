@@ -19,7 +19,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.http.AbstractInputStreamContent;
@@ -74,7 +75,7 @@ public class EntryPoint extends WebappServletPluginExtension {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(EntryPoint.class.getName());
+      LogManager.getLogger(EntryPoint.class.getName());
 
   /**
    * Returns the google api clientId saved

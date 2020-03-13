@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -29,7 +30,7 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(GDriveUrlStreamHandler.class.getName());
+      LogManager.getLogger(GDriveUrlStreamHandler.class.getName());
   
   /**
    * Opens a connection to the file specified by the given url.

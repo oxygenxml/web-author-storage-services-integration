@@ -17,7 +17,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -58,7 +59,7 @@ public class GDriveManagerFilter implements Filter, PluginExtension {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(GDriveManagerFilter.class.getName());
+      LogManager.getLogger(GDriveManagerFilter.class.getName());
   
   
   /**

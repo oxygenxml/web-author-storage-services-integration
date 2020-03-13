@@ -5,7 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
@@ -30,7 +31,7 @@ public class Credentials {
    * Logger for logging.
    */
   private static final Logger logger = 
-      Logger.getLogger(Credentials.class.getName());
+      LogManager.getLogger(Credentials.class.getName());
   /**
    * The http transport to use.
    */
