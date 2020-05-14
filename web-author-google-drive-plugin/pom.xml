@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.oxygenxml.samples</groupId>
     <artifactId>web-author-storage-services-plugin</artifactId>
-    <version>22.1-SNAPSHOT</version>
+    <version>23.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>web-author-google-drive-plugin</artifactId>
