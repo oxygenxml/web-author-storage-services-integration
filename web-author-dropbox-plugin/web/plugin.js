@@ -87,6 +87,9 @@
             window.location.href = "../plugins-dispatcher/dbx-start?path=" + encodeURIComponent(encodeURIComponent(path));
           }
         },
+        cancel: function() {
+          chosen(null);
+        },
 
         linkType: "direct",
         multiselect: false,
