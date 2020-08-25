@@ -27,7 +27,6 @@ import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.ParentReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -358,11 +357,11 @@ public class EntryPoint extends WebappServletPluginExtension {
         }
       });
 	    
-      String encodedFileTitle = URLEncoder.encode(file.getTitle(), UTF_8_ENCODING);
+      String encodedFileTitle = URLEncoder.encode(file.getName(), UTF_8_ENCODING);
       
-	    List<ParentReference> parents = file.getParents();
+	    List<String> parents = file.getParents();
 	    if (parents.isEmpty()) {
-	      if (file.getSharedWithMeDate() == null) {
+	      if (file.getSharedWithMeTime() == null) {
 	        // This file is either the root of the user's drive or another file
 	        // that is not linked in the user's Drive, for example a file shared 
 	        // by link.
@@ -379,7 +378,7 @@ public class EntryPoint extends WebappServletPluginExtension {
       path = "/" + encodedFileTitle + path;
       logger.debug("file id " + fileId + " current path " + path);
 
-	    fileId = parents.get(0).getId();
+	    fileId = parents.get(0);
 	  }
 	  return path;
 	}
@@ -400,12 +399,10 @@ public class EntryPoint extends WebappServletPluginExtension {
 	public String createNewTopic(String parentId, String fileName, URL url, String userId) throws IOException, AuthorizationRequiredException {
 	  final File file = new File();
 	  file.setMimeType(GDriveUrlConnection.MIME_TYPE);
-	  file.setTitle(fileName);
-	  logger.debug("parent id: " + parentId);
+	  file.setName(fileName);
+	  logger.debug("parent id: {}", parentId);
 	  if (parentId != null && parentId.length() > 0) {
-	    ParentReference parentRef = new ParentReference();
-	    parentRef.setId(parentId);
-	    file.setParents(Arrays.asList(parentRef));
+	    file.setParents(Arrays.asList(parentId));
 	  }
 	  
 	  final AbstractInputStreamContent mediaContent = new InputStreamContent(
@@ -414,7 +411,7 @@ public class EntryPoint extends WebappServletPluginExtension {
 	  File insertedFile = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<File>() {
       @Override
       public File executeOperation(Drive drive) throws IOException {
-        return drive.files().insert(file, mediaContent).execute();
+        return drive.files().create(file, mediaContent).execute();
       }
     });
 	  return computeFilePath(insertedFile.getId(), userId);

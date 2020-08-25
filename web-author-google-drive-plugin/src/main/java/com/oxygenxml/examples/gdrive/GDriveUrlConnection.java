@@ -82,11 +82,11 @@ public class GDriveUrlConnection extends HttpURLConnection {
       logger.debug("Connecting...");
       connected = true;
       if (doInput) {
-        logger.debug("Starting download of the file " + file.getTitle());
-        final String fileDownloadUrl = file.getDownloadUrl();
+        logger.debug("Starting download of the file " + file.getName());
+        final String fileDownloadUrl = file.getWebContentLink();
         if (fileDownloadUrl == null || fileDownloadUrl.length() == 0) {
           // File has no content on drive.
-          throw new FileNotFoundException(file.getTitle());
+          throw new FileNotFoundException(file.getName());
         }
         
         try {
@@ -193,7 +193,7 @@ public class GDriveUrlConnection extends HttpURLConnection {
    */
   @Override
   public synchronized OutputStream getOutputStream() throws IOException {
-    logger.debug("Starting to output in file " + file.getTitle());
+    logger.debug("Starting to output in file " + file.getName());
     
     return new ByteArrayOutputStream() {
       @Override

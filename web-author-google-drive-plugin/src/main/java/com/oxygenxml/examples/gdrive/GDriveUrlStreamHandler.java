@@ -160,13 +160,12 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @throws AuthorizationRequiredException
    */
   private List<File> searchForFiles(String userId, final String query) throws IOException, AuthorizationRequiredException {
-    List<File> files = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
+    return GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
       @Override
       public List<File> executeOperation(Drive drive) throws IOException {
-        return drive.files().list().setQ(query).execute().getItems();
+        return drive.files().list().setQ(query).execute().getFiles();
       }
     });
-    return files;
   }
 
 
@@ -186,13 +185,12 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    */
   List<File> searchFileByNameAndParent(String userId, String fileName, String parentId) throws IOException, AuthorizationRequiredException {
     final String query = "title='" + fileName + "' and '" + parentId + "' in parents and trashed = false";
-    List<File> files = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
+    return GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
       @Override
       public List<File> executeOperation(Drive drive) throws IOException {
-        return drive.files().list().setQ(query).execute().getItems();
+        return drive.files().list().setQ(query).execute().getFiles();
       }
     });
-    return files;
   }
 
   /**
@@ -207,13 +205,12 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @throws AuthorizationRequiredException
    */
   private File searchFileById(String userId, final String fileId) throws IOException, AuthorizationRequiredException {
-    File file = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<File>() {
+    return GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<File>() {
       @Override
       public File executeOperation(Drive drive) throws IOException {
         return drive.files().get(fileId).execute();
       }
     });
-    return file;
   }
   /**
    * Returns the user id encoded in the URL.
