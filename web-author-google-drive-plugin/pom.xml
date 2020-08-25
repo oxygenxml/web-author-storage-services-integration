@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
-			<version>v2-rev128-1.18.0-rc</version>
+			<version>v3-rev197-1.25.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.http-client</groupId>
