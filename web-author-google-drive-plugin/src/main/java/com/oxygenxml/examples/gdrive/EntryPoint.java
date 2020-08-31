@@ -360,7 +360,7 @@ public class EntryPoint extends WebappServletPluginExtension {
       String encodedFileTitle = URLEncoder.encode(file.getName(), UTF_8_ENCODING);
       
 	    List<String> parents = file.getParents();
-	    if (parents.isEmpty()) {
+	    if (parents == null) {
 	      if (file.getSharedWithMeTime() == null) {
 	        // This file is either the root of the user's drive or another file
 	        // that is not linked in the user's Drive, for example a file shared 
@@ -376,7 +376,7 @@ public class EntryPoint extends WebappServletPluginExtension {
 	      throw new FileNotFoundException("We cannot resolve relative links for files with more than one parent.");
 	    }
       path = "/" + encodedFileTitle + path;
-      logger.debug("file id " + fileId + " current path " + path);
+      logger.debug("file id {} current path {}", fileId, path);
 
 	    fileId = parents.get(0);
 	  }
