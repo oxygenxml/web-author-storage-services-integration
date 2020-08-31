@@ -17,7 +17,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.repackaged.com.google.common.base.Preconditions;
+import com.google.api.client.util.Preconditions;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
@@ -143,10 +143,9 @@ public class Credentials {
    * @return The refresh token request.
    */
   public GoogleRefreshTokenRequest createRefreshTokenReqeust(String refreshToken) throws IOException {
-    GoogleRefreshTokenRequest refreshTokenRequest = new GoogleRefreshTokenRequest(httpTransport, jsonFactory, 
+    return new GoogleRefreshTokenRequest(httpTransport, jsonFactory, 
         refreshToken, clientId, clientSecret)
         .setRequestInitializer(new OxygenHttpRequestInitializer());
-    return refreshTokenRequest;
   }
   
   /**
