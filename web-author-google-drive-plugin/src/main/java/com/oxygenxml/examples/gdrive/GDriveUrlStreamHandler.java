@@ -208,7 +208,7 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
     return GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<File>() {
       @Override
       public File executeOperation(Drive drive) throws IOException {
-        return drive.files().get(fileId).execute();
+        return drive.files().get(fileId).setFields("*").execute();
       }
     });
   }

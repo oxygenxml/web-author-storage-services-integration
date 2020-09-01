@@ -353,7 +353,7 @@ public class EntryPoint extends WebappServletPluginExtension {
 	    File file = GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<File>() {
         @Override
         public File executeOperation(Drive drive) throws IOException {
-          return drive.files().get(crtFileId).execute();
+          return drive.files().get(crtFileId).setFields("*").execute();
         }
       });
 	    
