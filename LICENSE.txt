@@ -1,4 +1,8 @@
-Copyright 2018 Syncro Soft SRL.
+Copyright 2020 Syncro Soft SRL.
 
-* The source code of this plug-in published here is released under the [Apache License 2.0](https://github.com/oxygenxml/web-author-storage-services-plugin/blob/master/LICENSE)
-* The plugin code relies on the [Oxygen XML SDK](https://www.oxygenxml.com/oxygen_sdk.html) that is available under a commercial license (see more on [Oxygen XML SDK Licensing Policy](https://www.oxygenxml.com/oxygen_sdk/licensing.html))
+* The source code of this plug-in published here is released under 
+  the Apache License 2.0
+  (https://github.com/oxygenxml/web-author-storage-services-plugin/blob/master/LICENSE)
+* The plugin code relies on the Oxygen XML SDK that is available under 
+  a commercial license. See more on Oxygen XML SDK Licensing Policy:
+  https://www.oxygenxml.com/oxygen_sdk/licensing.html .
