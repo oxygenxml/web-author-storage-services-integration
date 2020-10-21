@@ -15,6 +15,16 @@
   <description>A sample integration of the oXygen XML Web Author and two 
 	   online storage services: Google Drive and Dropbox.</description>
 
+  <developers>
+    <developer>
+      <name>Cristi Talau</name>
+      <email>cristi_talau@sync.ro</email>
+      <roles>
+        <role>manager</role>
+      </roles>
+    </developer>
+  </developers>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <oxygen.version>23.0-SNAPSHOT</oxygen.version>

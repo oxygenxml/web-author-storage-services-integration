@@ -11,6 +11,16 @@
   <name>Web Author Dropbox Plugin</name>
   <description>A plugin for oXygen XML Web Author to allow editing files on Dropbox</description>
 
+  <developers>
+    <developer>
+      <name>Cristi Talau</name>
+      <email>cristi_talau@sync.ro</email>
+      <roles>
+        <role>manager</role>
+      </roles>
+    </developer>
+  </developers>
+
   <properties>
     <sonar.sources>src/main/java,web</sonar.sources>
   </properties>
