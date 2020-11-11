@@ -143,7 +143,7 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @throws AuthorizationRequiredException
    */
   private List<File> searchSharedFiles(String userId, String fileName) throws IOException, AuthorizationRequiredException {
-    String query = "title='" + fileName + "' and sharedWithMe and trashed = false";
+    String query = "name='" + fileName + "' and sharedWithMe and trashed = false";
     return searchForFiles(userId, query);
   }
 
@@ -184,11 +184,11 @@ public class GDriveUrlStreamHandler extends URLStreamHandler {
    * @throws AuthorizationRequiredException
    */
   List<File> searchFileByNameAndParent(String userId, String fileName, String parentId) throws IOException, AuthorizationRequiredException {
-    final String query = "title='" + fileName + "' and '" + parentId + "' in parents and trashed = false";
+    final String query = "name='" + fileName + "' and '" + parentId + "' in parents and trashed = false";
     return GDriveManagerFilter.executeWithRetry(userId, new GDriveOperation<List<File>>() {
       @Override
       public List<File> executeOperation(Drive drive) throws IOException {
-        return drive.files().list().setQ(query).execute().getFiles();
+        return drive.files().list().setQ(query).setFields("*").execute().getFiles();
       }
     });
   }

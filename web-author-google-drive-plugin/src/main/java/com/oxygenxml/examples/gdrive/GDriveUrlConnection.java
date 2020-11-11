@@ -1,35 +1,31 @@
 package com.oxygenxml.examples.gdrive;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-
-import javax.servlet.http.HttpServletResponse;
+import java.net.URLConnection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files.Update;
 import com.google.api.services.drive.model.File;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.net.protocol.http.HttpExceptionWithDetails;
 
 
 /**
  * Url connection to a file on google drive.
  */
-public class GDriveUrlConnection extends HttpURLConnection {
+public class GDriveUrlConnection extends FilterURLConnection {
   /**
    * Logger for logging.
    */
@@ -41,14 +37,6 @@ public class GDriveUrlConnection extends HttpURLConnection {
    * Mime type of the edited files.
    */
   public static final String MIME_TYPE = "text/xml";
-  /**
-   * The http request used to download the file.
-   */
-  private HttpRequest request;
-  /**
-   * The http response received when downloading the file.
-   */
-  private HttpResponse response;
   
   /**
    * The file to which this connection refers.
@@ -68,148 +56,52 @@ public class GDriveUrlConnection extends HttpURLConnection {
    * @param userId The id of the user to whose drive we connect.
    */
   public GDriveUrlConnection(URL downloadUrl, File file, String userId) throws IOException {
-    super(downloadUrl);
+    super(new URLConnection(downloadUrl) {
+      @Override
+      public void connect() throws IOException {
+        connected = true;
+      }
+    });
+    
     this.file = file;
     this.userId = userId;
   }
   
   /**
-   * @see java.net.URLConnection#connect()
-   */
-  @Override
-  public void connect() throws IOException  {
-    if (!connected) {
-      logger.debug("Connecting...");
-      connected = true;
-      if (doInput) {
-        logger.debug("Starting download of the file " + file.getName());
-        final String fileDownloadUrl = file.getWebContentLink();
-        if (fileDownloadUrl == null || fileDownloadUrl.length() == 0) {
-          // File has no content on drive.
-          throw new FileNotFoundException(file.getName());
-        }
-        
-        try {
-          GDriveManagerFilter.executeWithRetry(this.userId, new GDriveOperation<Void>() {
-            @Override
-            public Void executeOperation(Drive drive) throws IOException {
-              request = drive.getRequestFactory().buildGetRequest(new GenericUrl(fileDownloadUrl));
-              response = request.execute();   
-              return null;
-            }
-          });
-          
-          // init base class fields.
-          responseCode = response.getStatusCode();
-          responseMessage = response.getStatusMessage();
-        } catch (AuthorizationRequiredException e) {
-          logger.warn("User revoked access while editing.", e);
-          
-          responseCode = HttpServletResponse.SC_UNAUTHORIZED;
-          responseMessage = "Access revoked during editing";
-        }
-        
-        logger.debug("Request executed");
-        
-      }
-    }
-  }
-
-  /**
    * @see java.net.URLConnection#getInputStream()
    */
   @Override
   public synchronized InputStream getInputStream() throws IOException {
-    connect();
-    return response.getContent();
-  }
-
-  /**
-   * @see java.net.URLConnection#getContentLength()
-   */
-  @Override
-  public int getContentLength() {
-    int length = -1;
     try {
-      connect();
-      Long contentLength = response.getHeaders().getContentLength();
-      if (contentLength != null) {
-        length = contentLength.intValue();
-      }
-    } catch (Throwable t) {
-      // We could not determine the length;
-    }
-    logger.debug("Content length: " + length);
-    return length;
+      return GDriveManagerFilter.executeWithRetry(GDriveUrlConnection.this.userId, drive -> {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        drive.files().get(file.getId()).executeMediaAndDownloadTo(outputStream);
+        
+        return new ByteArrayInputStream(outputStream.toByteArray());
+      });
+    } catch (AuthorizationRequiredException e) {
+      throw new IOException(e);
+    }  
   }
-
-  /**
-   * Always returns false. No caching.
-   * 
-   * @return false.
-   * 
-   * @see java.net.URLConnection#getUseCaches()
-   */
-  @Override
-  public boolean getUseCaches() {
-    return false;
-  }
-
-  /**
-   * Always returns false. No caching.
-   * 
-   * @see java.net.URLConnection#getDefaultUseCaches()
-   */
-  @Override
-  public boolean getDefaultUseCaches() {
-    return false;
-  }
-
-  @Override
-  public int getResponseCode() throws IOException {
-    return response.getStatusCode();
-  }
-  
-  @Override
-  public void disconnect() {
-    if (connected) {
-      connected = false;
-      try {
-        response.disconnect();
-      } catch (IOException e) {
-        logger.error(e, e);
-      }
-    }
-  }
-
-  @Override
-  public boolean usingProxy() {
-    return false;
-  }
-
 
   /**
    * @see java.net.URLConnection#getOutputStream()
    */
   @Override
   public synchronized OutputStream getOutputStream() throws IOException {
-    logger.debug("Starting to output in file " + file.getName());
-    
     return new ByteArrayOutputStream() {
       @Override
       public void close() throws IOException {
         final byte[] byteArray = super.toByteArray();
         logger.debug("writing to file...");
         try {
-          file.setMimeType(MIME_TYPE);
           // update the file.
           GDriveManagerFilter.executeWithRetry(GDriveUrlConnection.this.userId, new GDriveOperation<Void>() {
             @Override
             public Void executeOperation(Drive drive) throws IOException {
-              Update update = drive.files().update(file.getId(), file, new ByteArrayContent(MIME_TYPE, byteArray));
+              Update update = drive.files().update(file.getId(), null, new ByteArrayContent(MIME_TYPE, byteArray));
               logger.debug(update);
-              File uploadedFile = update.execute();
-              logger.debug(file.getVersion() + " -> " + uploadedFile.getVersion());
+              update.execute();
               return null;
             }
           });  
