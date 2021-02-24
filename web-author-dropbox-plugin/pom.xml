@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.oxygenxml.samples</groupId>
     <artifactId>web-author-storage-services-plugin</artifactId>
-    <version>23.1-SNAPSHOT</version>
+    <version>24.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>web-author-dropbox-plugin</artifactId>
